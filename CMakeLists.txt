@@ -3,7 +3,22 @@ project(PunkVerseProject)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp
+        src/types.h
+        src/Globals.h
+        src/Note.cpp
+        src/Note.h
+        src/Game.cpp
+        src/Game.h
+        src/ILevel.h
+        src/Level1.cpp
+        src/Level1.h
+        src/ParallaxBg.h
+        src/Level2.cpp
+        src/Level2.h
+        src/Level3.cpp
+        src/Level3.h
+)
 
 include(FetchContent)
 
