@@ -1,3 +1,4 @@
+#pragma once
 #include <raylib.h>
 #include <cstdint>
 
@@ -18,9 +19,6 @@ typedef                     Color                 clr;
 typedef                     Texture2D             tex2d;
 typedef                     RenderTexture2D       rtex2d;
 typedef                     Rectangle             rect;
-
-struct Pos: vec2{};
-struct Vel: vec2{};
 
 #define LINKTYPE_VECVEC(op, la, lb) \
 inline static vec2 operator op \
@@ -43,7 +41,7 @@ inline static vec2 operator op \
 template <typename T> \
 inline static vec2 operator op \
 ( \
-    vec2 la a, T lb b \
+    T lb b, vec2 la a \
 ){ \
     return {b op a.x, b op a.y}; \
 }
@@ -81,5 +79,10 @@ OP_VECNUM(/=)
 OP_NUMVEC(*)
 OP_NUMVEC(*=)
 
+template <typename T>
+inline static T lerp(T a, T b, float weight){
+    return (b-a)*weight + a;
+}
+
 #define METER 128.f
-#define GRAV 9.8f * METER
+#define GRAV 4.8f * METER
