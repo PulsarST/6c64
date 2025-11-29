@@ -28,22 +28,21 @@ public:
     ~Level2() override;
 private:
 
-    vec2 cam_pos;
-
-    tex2d layer_1{};
-    tex2d layer_2{};
-
-    Music mus{};
-
-    tex2d box{};
-
-    std::vector<KinemAABB> balls;
-
-    size_t dirizhables_index;
+    vec2    cam_pos;
 
     ParallaxBG bg;
+    World   w;
 
-    bool infinite_mass;
+    tex2d   layer_1{};
+    tex2d   layer_2{};
+
+    tex2d   house_0{},
+            house_1{},
+            house_2{},
+            house_3{},
+            box{};
+
+    Music   mus{};
 };
 
 
