@@ -6,8 +6,8 @@
 
 #include "Globals.h"
 
-Dialog::Dialog(const std::string& filename, const vec2 pos) {
-    this->person = LoadTexture(filename.c_str());
+Dialog::Dialog(Texture2D *texture, const vec2 pos) {
+    this->person = texture;
     this->pos = pos;
 }
 
@@ -27,7 +27,7 @@ void Dialog::draw() {
         .height = rect_height
     };
 
-    DrawTexture(person, GetScreenWidth() / 2 - 780, 0, WHITE);
+    DrawTexture(*person, GetScreenWidth() / 2 - 780, 0, WHITE);
     //DrawTexture(personTexture[personID], 0, 720, WHITE);
     DrawRectangle(rect.x, rect.y, rect.width, rect.height, BROWN);
     DrawRectangleLines(rect.x, rect.y, rect.width, rect.height, BLACK);
@@ -42,5 +42,5 @@ void Dialog::add_line(const string &line) {
 }
 
 Dialog::~Dialog() {
-    UnloadTexture(person);
+    // UnloadTexture(*person);
 }

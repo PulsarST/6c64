@@ -4,8 +4,8 @@
 
 #include "DialogManager.h"
 
-void DialogManager::addDialog(const std::string& path, vec2 pos) {
-    dialogs.emplace_back(path, pos);
+void DialogManager::addDialog(Texture2D *texture, vec2 pos) {
+    dialogs.emplace_back(texture, pos);
 }
 
 void DialogManager::draw() {

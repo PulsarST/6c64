@@ -2,6 +2,8 @@
 #define PUNKVERSEPROJECT_LEVEL1_H
 
 #include <vector>
+
+#include "DialogManager.h"
 #include "ILevel.h"
 #include "raylib.h"
 #include "Note.h"
@@ -17,19 +19,20 @@ public:
 private:
     std::vector<Note> notes;
     std::vector<int> init_data;
+    DialogManager dialogManager;
 
     // music
     Music music{};
 
-    Texture2D leftArrow;
-    Texture2D rightArrow;
+    Texture2D leftArrow{};
+    Texture2D rightArrow{};
 
     // lane positions (calculated in constructor)
     float leftLaneX;
     float rightLaneX;
 
-    Color leftLaneColor;
-    Color rightLaneColor;
+    Color leftLaneColor{};
+    Color rightLaneColor{};
 
     // timing
     float bpm = 95.f;

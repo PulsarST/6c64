@@ -12,6 +12,6 @@
 
 #include <vector>
 
-extern inline Level currentLevel = LEVEL3;
+extern inline Level currentLevel = MENU;
 
 #endif //PUNKVERSEPROJECT_GLOBALS_H

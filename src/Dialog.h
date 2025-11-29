@@ -14,7 +14,7 @@ using std::string;
 
 class Dialog {
 public:
-    explicit Dialog(const std::string& filename, vec2  pos);
+    explicit Dialog(Texture2D *texture, vec2  pos);
 
     void draw();
 
@@ -40,7 +40,7 @@ public:
 
 private:
     vector<string> lines;
-    Texture2D person;
+    Texture2D *person;
     vec2 pos;
     vec2 size;
 };

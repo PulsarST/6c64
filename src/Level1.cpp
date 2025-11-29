@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 
+Texture2D person_fr1;
 
 
 // Constructor
@@ -308,68 +309,96 @@ Level1::Level1()
         std::cout << spawnTime << '\n';
         notes.emplace_back(spawnTime, lane, pos, c);
     }
+
+
+    person_fr1 = LoadTexture("assets\\FR1.png");
+
+    dialogManager.addDialog(&person_fr1,  vec2 {50,6.f * GetScreenHeight() / 8});
+    dialogManager.addLines(0, {
+        "Hey yo ! whatsup bro !",
+        "I heard you need a car ? Then i can help ya",
+        "BUUUUUUUUUUUUUUUuuuuuuuuuuut !",
+        "Ya gotta bit me at dance",
+        "If you won i'll give you a car",
+        "Deal ?"
+    });
+
+    dialogManager.addDialog(&person_fr1,  vec2 {50,6.f * GetScreenHeight() / 8});
+    dialogManager.addLines(1, {
+        "Ok bruh !",
+        "Let's make a fire !"
+        "Our battle's gonna be legendary !"
+    });
 }
 
 // Update
 void Level1::update() {
-    // MUSIC
-    if (!musicStarted) {
-        PlayMusicStream(music);
-        musicStarted = true;
-    }
 
-    UpdateMusicStream(music);
-    songTime = GetMusicTimePlayed(music);
-
-    // DRAW ARROWS
-
-    // INPUT HIT
-    if (IsKeyPressed(KEY_LEFT)) {
-        for (auto &n : notes)
-            if (n.lane == 0) n.TryHit(songTime, hitWindow, hitLineY);
-    }
-
-    if (IsKeyPressed(KEY_RIGHT)) {
-        for (auto &n : notes)
-            if (n.lane == 1) n.TryHit(songTime, hitWindow, hitLineY);
-    }
-
-    if (IsKeyDown(KEY_LEFT)) {
-        leftLaneColor = WHITE;
+    if (!dialogManager.getIsFinished()) {
+        dialogManager.update();
     } else {
-        leftLaneColor = GRAY;
-    }
+        // MUSIC
+        if (!musicStarted) {
+            PlayMusicStream(music);
+            musicStarted = true;
+        }
 
-    if (IsKeyDown(KEY_RIGHT)) {
-        rightLaneColor = WHITE;
-    } else {
-        rightLaneColor = GRAY;
-    }
+        UpdateMusicStream(music);
+        songTime = GetMusicTimePlayed(music);
 
-    // REMOVE hit or missed
-    std::erase_if(notes,
-                  [&](const Note& n){
-                      return n.hit || n.position.y > GetScreenHeight() + 50;
-                  });
+        // INPUT HIT
+        if (IsKeyPressed(KEY_LEFT)) {
+            for (auto &n : notes)
+                if (n.lane == 0) n.TryHit(songTime, hitWindow, hitLineY);
+        }
+
+        if (IsKeyPressed(KEY_RIGHT)) {
+            for (auto &n : notes)
+                if (n.lane == 1) n.TryHit(songTime, hitWindow, hitLineY);
+        }
+
+        if (IsKeyDown(KEY_LEFT)) {
+            leftLaneColor = WHITE;
+        } else {
+            leftLaneColor = GRAY;
+        }
+
+        if (IsKeyDown(KEY_RIGHT)) {
+            rightLaneColor = WHITE;
+        } else {
+            rightLaneColor = GRAY;
+        }
+
+        // REMOVE hit or missed
+        std::erase_if(notes,
+                      [&](const Note& n){
+                          return n.hit || n.position.y > GetScreenHeight() + 50;
+                      });
+    }
 }
 
 // Draw
 void Level1::draw() {
-    // DrawRectangle(leftLaneX,  hitLineY, 50, 50, WHITE);
-    // DrawRectangle(rightLaneX, hitLineY, 50, 50, WHITE);
+    if (!dialogManager.getIsFinished()) {
+        dialogManager.draw();
+    } else {
+        // DrawRectangle(leftLaneX,  hitLineY, 50, 50, WHITE);
+        // DrawRectangle(rightLaneX, hitLineY, 50, 50, WHITE);
 
-    DrawTexture(leftArrow, leftLaneX, hitLineY, leftLaneColor);
-    DrawTexture(rightArrow, rightLaneX, hitLineY, rightLaneColor);
+        DrawTexture(leftArrow, leftLaneX, hitLineY, leftLaneColor);
+        DrawTexture(rightArrow, rightLaneX, hitLineY, rightLaneColor);
 
-    // UPDATE + DRAW NOTES
-    for (auto &n : notes) {
-        n.Update(songTime, speed, hitLineY);
-        n.Draw();
+        // UPDATE + DRAW NOTES
+        for (auto &n : notes) {
+            n.Update(songTime, speed, hitLineY);
+            n.Draw();
+        }
     }
 }
 
 // Destructor
 Level1::~Level1() {
+    UnloadTexture(person_fr1);
     UnloadTexture(leftArrow);
     UnloadTexture(rightArrow);
     UnloadMusicStream(music);

@@ -9,11 +9,13 @@
 
 class DialogManager {
 public:
-    void addDialog(const std::string& path, vec2 pos);
+    void addDialog(Texture2D *texture, vec2 pos);
     void draw();
     void update();
 
     void addLines(int i, std::vector<std::string> lines);
+
+    [[nodiscard]] bool getIsFinished() const { return isFinished; }
 
 private:
     std::vector<Dialog> dialogs;

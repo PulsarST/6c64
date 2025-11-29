@@ -22,9 +22,6 @@ void Note::Update(const float songTime, const float speed, const float pad_pos_y
     position.y = dt * speed + pad_pos_y;
 
     // position.y += speed * GetFrameTime() + pad_pos_y;
-
-
-
 }
 
 void Note::Draw() const {
@@ -35,18 +32,26 @@ void Note::Draw() const {
     // std::cout << "pos y: " << position.y << "\n";
 }
 
-bool Note::IsColliding(const float hitLineY) const {
-    return (position.y + 50 >= hitLineY - 20 &&
-            position.y <= hitLineY + 20);
+bool Note::IsColliding(float hitLineY) const {
+    const float halfSize = 25.0f;      // half of 50x50 note
+    const float collisionWindow = 10.f; // how “thick” the hit area is
+
+    float noteTop    = position.y - halfSize;
+    float noteBottom = position.y + halfSize;
+
+    float lineTop    = hitLineY - collisionWindow;
+    float lineBottom = hitLineY + collisionWindow;
+
+    return (noteBottom >= lineTop && noteTop <= lineBottom);
 }
 
-bool Note::TryHit(const float songTime, const float hitWindow, const float hitLineY) {
-    if (hit) return false;
+bool Note::TryHit(float songTime, float hitWindow, float hitLineY) {
+    if (hit) return false;               // already hit
 
-    // Must collide with arrow
+    // Must be touching the hit line
     if (!IsColliding(hitLineY)) return false;
 
-    // Must be within timing window
+    // Must be inside timing window
     if (std::fabs(songTime - time) <= hitWindow) {
         hit = true;
         return true;
@@ -54,3 +59,5 @@ bool Note::TryHit(const float songTime, const float hitWindow, const float hitLi
 
     return false;
 }
+
+
