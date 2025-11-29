@@ -1,4 +1,6 @@
 #include "Level1.h"
+
+#include <cmath>
 #include <iostream>
 
 // Constructor
@@ -22,8 +24,16 @@ Level1::Level1()
     // Music must be loaded here (NOT in class body)
     music = LoadMusicStream("assets/mus.mp3");
     // Now it's safe to use GetScreenWidth()
-    leftLaneX  = GetScreenWidth()  / 2.0f - 150;
-    rightLaneX = GetScreenWidth()  / 2.0f + 100;   // FIXED (you used GetScreenHeight!)
+
+    leftArrow = LoadTexture("assets/left_arrow.png");
+    rightArrow = LoadTexture("assets/right_arrow.png");
+
+    float screenWidth = GetScreenWidth();
+    leftLaneX  = ((screenWidth - leftArrow.width) / 2.0f) - leftArrow.width;
+    rightLaneX = ((screenWidth - rightArrow.width) / 2.0f) + rightArrow.width;
+
+    leftLaneColor = GRAY;
+    rightLaneColor = GRAY;
 
     std::cout << init_data.size() << '\n';
 
@@ -34,7 +44,7 @@ Level1::Level1()
         int lane = init_data[i];
 
         Vector2 pos = {
-            (lane == 0 ? leftLaneX : rightLaneX),
+            (lane == 0 ? (leftLaneX + leftArrow.width / 2 - 25) : (rightLaneX + leftArrow.width / 2 - 25)),
             -400
         };
 
@@ -75,6 +85,18 @@ void Level1::update() {
             if (n.lane == 1) n.TryHit(songTime, hitWindow, hitLineY);
     }
 
+    if (IsKeyDown(KEY_LEFT)) {
+        leftLaneColor = WHITE;
+    } else {
+        leftLaneColor = GRAY;
+    }
+
+    if (IsKeyDown(KEY_RIGHT)) {
+        rightLaneColor = WHITE;
+    } else {
+        rightLaneColor = GRAY;
+    }
+
     // REMOVE hit or missed
     std::erase_if(notes,
                   [&](const Note& n){
@@ -82,12 +104,14 @@ void Level1::update() {
                   });
 }
 
-// --------------------
 // Draw
-// --------------------
 void Level1::draw() {
-    DrawRectangle(leftLaneX,  hitLineY, 50, 50, WHITE);
-    DrawRectangle(rightLaneX, hitLineY, 50, 50, WHITE);
+    // DrawRectangle(leftLaneX,  hitLineY, 50, 50, WHITE);
+    // DrawRectangle(rightLaneX, hitLineY, 50, 50, WHITE);
+
+    DrawTexture(leftArrow, leftLaneX, hitLineY, leftLaneColor);
+    DrawTexture(rightArrow, rightLaneX, hitLineY, rightLaneColor);
+
     // UPDATE + DRAW NOTES
     for (auto &n : notes) {
         n.Update(songTime, speed, hitLineY);
@@ -97,6 +121,8 @@ void Level1::draw() {
 
 // Destructor
 Level1::~Level1() {
+    UnloadTexture(leftArrow);
+    UnloadTexture(rightArrow);
     UnloadMusicStream(music);
 }
 

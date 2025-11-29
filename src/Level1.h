@@ -18,6 +18,19 @@ private:
     std::vector<Note> notes;
     std::vector<int> init_data;
 
+    // music
+    Music music{};
+
+    Texture2D leftArrow;
+    Texture2D rightArrow;
+
+    // lane positions (calculated in constructor)
+    float leftLaneX;
+    float rightLaneX;
+
+    Color leftLaneColor;
+    Color rightLaneColor;
+
     // timing
     float bpm = 90.f;
     float splits = 4.f;
@@ -35,13 +48,6 @@ private:
 
     bool musicStarted = false;
     float songTime = 0.f;
-
-    // music
-    Music music{};
-
-    // lane positions (calculated in constructor)
-    float leftLaneX;
-    float rightLaneX;
 };
 
 #endif
