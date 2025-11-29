@@ -32,7 +32,8 @@ private:
 
     tex2d layer_1{};
     tex2d layer_2{};
-    tex2d layer_3{};
+
+    Music mus{};
 
     tex2d box{};
 

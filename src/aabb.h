@@ -1,6 +1,8 @@
 #include "world.h"
 #include <cmath>
 
+#define SOLID_OBJECT_MASS __FLT_MAX__ * 0.5f
+
 struct AABB: Base{
     vec2 size;
 
@@ -14,12 +16,23 @@ struct AABB: Base{
     virtual void touchedCeiling(){};
 };
 
+enum CollType{
+    CollisionType_SOLID = 0,
+    CollisionType_PLATFORM
+};
+
 struct CollAABB: AABB{
     float mass;
     float boyancy_k;
-    bool __resolved__ = 0;
+    CollType coll_type;
 
-    CollAABB(vec2 pos, vec2 size, float mass = __FLT_MAX__ * 0.5f, float boyancy_k = 0.f);
+    CollAABB(
+        vec2 pos, 
+        vec2 size, 
+        CollType coll_type = CollisionType_SOLID, 
+        float mass = SOLID_OBJECT_MASS, 
+        float boyancy_k = 0.f
+    );
 
     void colideWith(
         CollAABB *other, 
@@ -34,7 +47,13 @@ struct KinemAABB: CollAABB{
          hit_wall = 0,
          hit_ceiling = 0;
 
-    KinemAABB(vec2 pos, vec2 size, float mass = __FLT_MAX__ * 0.5f, float boyancy_k = 0.f);
+    KinemAABB(
+        vec2 pos, 
+        vec2 size, 
+        CollType coll_type = CollisionType_SOLID,
+        float mass = SOLID_OBJECT_MASS,
+        float boyancy_k = 0.f
+    );
 
     virtual vec2 *getVelocity() override;
 

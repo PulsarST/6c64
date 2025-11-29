@@ -10,11 +10,12 @@ Level2::Level2(): ILevel() {
 
     std::cout << "cam_pos inited\n";
 
-    layer_1 = LoadTexture("assets/layer_1.png");
-    layer_2 = LoadTexture("assets/layer_2.png");
-    layer_3 = LoadTexture("assets/layer_3.png");
+    layer_1 = LoadTexture("assets/level_2_bg_base.png");
+    layer_2 = LoadTexture("assets/level_2_bg_front.png");
 
     box = LoadTexture("assets/ball.png");
+
+    mus = LoadMusicStream("assets/delivery.wav");
 
     std::cout << "textures inited\n";
 
@@ -46,15 +47,13 @@ Level2::Level2(): ILevel() {
     std::cout << "dirizhables inited\n";
 
     vec2 parallax_coeffs[PARALLAX_LAYERS_COUNT] = {
-        {0.f, 0.f},
-        {0.1f, 0.f},
+        {0.1f, 0.1f},
         {0.4f, 0.4f}
     };
 
     tex2d* parallax_textures[PARALLAX_LAYERS_COUNT] = {
         &layer_1,
-        &layer_2,
-        &layer_3
+        &layer_2
     };
 
     bg = ParallaxBG(parallax_coeffs, parallax_textures);
@@ -71,7 +70,7 @@ void Level2::draw() {
         , 
         GetFrameTime()*3.f < 1.f ? GetFrameTime()*3.f : 1.f
     );
-    // bg.draw(cam_pos);
+    bg.draw(cam_pos);
     for(auto& i : balls){
         // DrawCircleV(i.pos-cam_pos, 10, BLUE);
         DrawTextureV(box,i.pos-cam_pos,WHITE);
@@ -80,6 +79,9 @@ void Level2::draw() {
 
 void Level2::update() {
     // std::cout << "start\n";
+    if(!IsMusicStreamPlaying(mus))
+        PlayMusicStream(mus);
+    UpdateMusicStream(mus);
     
     if(IsKeyPressed(KEY_SPACE))
         infinite_mass = !infinite_mass;
@@ -122,5 +124,6 @@ Level2::~Level2() {
     UnloadTexture(layer_1);
     UnloadTexture(layer_2);
     UnloadTexture(layer_3);
+    UnloadMusicStream(mus);
 }
 

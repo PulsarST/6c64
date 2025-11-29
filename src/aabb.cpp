@@ -22,8 +22,15 @@ vec2 *AABB::getVelocity(){
     return nullptr;
 }
 
-CollAABB::CollAABB(vec2 pos, vec2 size, float mass, float boyancy_k):
+CollAABB::CollAABB(
+    vec2 pos, 
+    vec2 size, 
+    CollType coll_type,
+    float mass, 
+    float boyancy_k
+):
     AABB(pos, size),
+    coll_type(coll_type),
     mass(mass),
     boyancy_k(boyancy_k)
 {}
@@ -34,6 +41,7 @@ void CollAABB::colideWith(
 ){
     if(!isColliding(other))return;
     // if(__resolved__ || other->__resolved__)return;
+    if(other->coll_type == CollisionType_PLATFORM && coll_type == other->coll_type)return;
 
     vec2 *this_vel = getVelocity(),
          *other_vel = other->getVelocity();
@@ -49,6 +57,7 @@ void CollAABB::colideWith(
 
     // DrawCircleV(center, 5.f, RED);
     // DrawCircleV(other_center, 5.f, GREEN);
+    
     if(abs_x > abs_y){
         bool top_wall;
         if(center.y > other_center.y){
@@ -111,8 +120,9 @@ void CollAABB::colideWith(
     // __resolved__ = other->__resolved__ = 1;
 }
 
-KinemAABB::KinemAABB(vec2 pos, vec2 size, float mass, float boyancy_k):
-CollAABB(pos, size, mass, boyancy_k),
+KinemAABB::KinemAABB(vec2 pos, vec2 size,
+    CollType coll_type, float mass, float boyancy_k):
+CollAABB(pos, size, coll_type, mass, boyancy_k),
 vel((vec2){0.f, 0.f})
 {}
 

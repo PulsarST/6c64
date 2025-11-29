@@ -41,6 +41,11 @@ void Game::run() {
         deltaTime = GetFrameTime();
         levels[currentLevel]->update();
 
+        if(IsKeyPressed(KEY_LEFT))
+            currentLevel = (Level)((int)currentLevel-1);
+        if(IsKeyPressed(KEY_RIGHT))
+            currentLevel = (Level)((int)currentLevel+1);
+
         BeginDrawing();
             ClearBackground(SKYBLUE);
 

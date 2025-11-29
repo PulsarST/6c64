@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define PARALLAX_LAYERS_COUNT 3
+#define PARALLAX_LAYERS_COUNT 2
 struct ParallaxBG{
     vec2    coeffs[PARALLAX_LAYERS_COUNT];
     tex2d  *textures[PARALLAX_LAYERS_COUNT];
