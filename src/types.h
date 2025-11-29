@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <cstdint>
+#include <math.h>
 #include <functional>
 
 typedef                     int8_t                i8;
@@ -83,6 +84,13 @@ OP_NUMVEC(*=)
 template <typename T>
 inline static T lerp(T a, T b, float weight){
     return (b-a)*weight + a;
+}
+
+inline static float dist(vec2 a){
+    return sqrtf(a.x*a.x + (a.y*a.y));
+}
+inline static vec2 norm(vec2 a){
+    return a / dist(a);
 }
 
 #define METER 128.f

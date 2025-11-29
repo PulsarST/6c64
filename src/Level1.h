@@ -32,7 +32,7 @@ private:
     Color rightLaneColor;
 
     // timing
-    float bpm = 90.f;
+    float bpm = 95.f;
     float splits = 4.f;
     float note_delay = 60.f / bpm / splits;
 

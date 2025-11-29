@@ -34,9 +34,9 @@ struct CollAABB: AABB{
         float boyancy_k = 0.f
     );
 
-    void colideWith(
+    virtual void colideWith(
         CollAABB *other, 
-        float &&dt
+        float dt
     );
 };
 
@@ -57,6 +57,7 @@ struct KinemAABB: CollAABB{
 
     virtual void process(float dt) override;
     virtual vec2 *getVelocity() override;
+    virtual void colideWith(CollAABB *other, float dt) override;
 
     virtual void touchedFloor() override;
     virtual void touchedWall() override;

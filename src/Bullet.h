@@ -5,31 +5,17 @@
 #ifndef PUNKVERSEPROJECT_BULLET_H
 #define PUNKVERSEPROJECT_BULLET_H
 #include "types.h"
+#include "aabb.h"
 
 
-class Bullet final {
-public:
-    explicit Bullet() = delete;
-    Bullet(const Bullet& b) = delete;
-    explicit Bullet(Bullet&& bullet) = default;
-    Bullet& operator=(const Bullet& b) = delete;
-    Bullet& operator=(Bullet&& bullet) = default;
+struct Bullet: KinemAABB{
+    tex2d *source = nullptr;
 
-    explicit Bullet(vec2 position, float angle, float radius, float speed);
+    Bullet(): KinemAABB({0.f, 0.f}, {1.f, 1.f}){}
+    Bullet(vec2 pos, tex2d *source = nullptr, vec2 target = {0.f, 0.f});
 
-    void update(float deltaTime);
-    void draw();
-
-    ~Bullet();
-
-private:
-    void move(float deltaTime);
-
-    vec2 position;
-    vec2 velocity { .x = 0, .y = 0 };
-    float angle;
-    float radius;
-    float speed;
+    virtual void process(float dt) override;
+    virtual void draw(vec2 &cam_pos) override;
 };
 
 

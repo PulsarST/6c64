@@ -1,0 +1,2 @@
+open.lnk
+pause

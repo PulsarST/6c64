@@ -4,14 +4,11 @@
 #define RES (vec2){(float)GetScreenWidth(), (float)GetScreenHeight()}
 #include <unordered_set>
 #include <iostream>
-#include <memory>
-
-#define ptr std::shared_ptr
 
 struct Chunk;
 
 struct Base{
-     Chunk *chunk;
+     Chunk *chunk = nullptr;
      vec2 pos;
 
     Base(){}
@@ -25,10 +22,12 @@ struct Chunk{
         const i32 pos;
         Chunk *top = nullptr;
         Chunk *bottom = nullptr;
-        std::unordered_set<ptr<Base>> in_chunk;
+        std::unordered_set<Base*> in_chunk;
 
         Chunk(i32 pos): pos(pos){}
         ~Chunk(){
+            for(auto &i : in_chunk)
+                delete i;
             delete top;
             delete bottom;
         }
@@ -41,7 +40,7 @@ struct World{
     vec2 *cam_target = nullptr;
     vec2 cam_pos;
 
-    std::unordered_set<ptr<Base>> active;
+    std::unordered_set<Base*> active;
 
     std::function<void(World*)> on_reaching_top;
     std::function<void(World*)> on_reaching_bottom;
@@ -54,19 +53,36 @@ struct World{
         current = root;
     }
 
-    void add(ptr<Base> item, Chunk *c){
+    void add(Base* item, Chunk *c, bool to_active = 0){
+        // std::cout << "World::add began\n";
         if(!item)return;
         if(!c)return;
+        // std::cout << "passed not nullptr\n";
+        // std::cout << item->pos.x << ' ' << item->pos.y << '\n';
         c->in_chunk.insert(item);
+        // std::cout << "in chunk inserted successfully\n";
+        if(to_active)
+            active.insert(item);
+        // std::cout << "active inserted successfully\n";
         item->pos.y += c->pos * CHUNK_SIZE.y;
         item->chunk = c;
-        if(c == current){
-            active.insert(item);
-        }
+    }
+
+    void remove(Base *item, Chunk *c){
+        if(!item)return;
+        if(!c)return;
+        active.erase(item);
+        c->in_chunk.erase(item);
     }
 
     void process(float dt){
         if(current == nullptr)return;
+        // std::cout << "nullptr passed\n";
+        // std::cout << "if active empty\n";
+        if(active.empty())
+            for(auto &i : current->in_chunk)
+                active.insert(i);
+        // std::cout << "cam target\n";
         if(cam_target)
             cam_pos = lerp(
                 cam_pos, 
@@ -78,10 +94,12 @@ struct World{
         else if(cam_pos.x > CHUNK_SIZE.x - RES.x)
             cam_pos.x = CHUNK_SIZE.x - RES.x;
         if(cam_pos.y < current->pos * CHUNK_SIZE.y){
-            for(auto &i : active){
-                if(i->chunk == current->bottom)
-                    active.erase(i);
-            }
+            // std::cout << "unload bottom\n";
+            if(current->bottom)
+                for(auto &i : active){
+                    if(i->chunk == current->bottom)
+                        active.erase(i);
+                }
             if(!current->top){
                 on_reaching_top(this);
             }
@@ -93,6 +111,7 @@ struct World{
             
         }
         else if(cam_pos.y >= current->pos+1 * CHUNK_SIZE.y){
+            // std::cout << "unload top\n";
             for(auto &i : active){
                 if(i->chunk == current)
                     active.erase(i);
@@ -106,6 +125,7 @@ struct World{
                     active.insert(i);
             }
         }
+        // std::cout << "process dt\n";
         for(auto &i : active){
             i->process(dt);
         }

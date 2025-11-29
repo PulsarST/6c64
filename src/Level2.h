@@ -6,23 +6,23 @@
 #define PUNKVERSEPROJECT_LEVEL2_H
 #include "ILevel.h"
 #include "ParallaxBg.h"
-#include "aabb.h"
+#include "Bullet.h"
 #include <vector>
 
 void static control4(vec2 &p){
     vec2 a = {0,0};
-    a.x += 2.f * METER * IsKeyDown(KEY_D);
-    a.x -= 2.f * METER * IsKeyDown(KEY_A);
-    a.y += 2.f * METER * IsKeyDown(KEY_S);
-    a.y -= 2.f * METER * IsKeyDown(KEY_W);
+    a.x += 3.f * METER * IsKeyDown(KEY_D);
+    a.x -= 3.f * METER * IsKeyDown(KEY_A);
+    a.y += 3.f * METER * IsKeyDown(KEY_S);
+    a.y -= 3.f * METER * IsKeyDown(KEY_W);
 
     p = a;
 }
 
 void static control2(vec2 &p){
     vec2 a = {0,0};
-    a.x += 2.f * METER * IsKeyDown(KEY_D);
-    a.x -= 2.f * METER * IsKeyDown(KEY_A);
+    a.x += 3.f * METER * IsKeyDown(KEY_D);
+    a.x -= 3.f * METER * IsKeyDown(KEY_A);
 
     p.x = a.x;
 }
@@ -54,7 +54,10 @@ private:
     ParallaxBG bg;
     World   w;
 
-    ptr<Base> player;
+    Base *player;
+    KinemAABB* player_cast;
+
+    std::vector<Bullet*> bullets;
 
     tex2d   layer_1{};
     tex2d   layer_2{};
@@ -63,7 +66,10 @@ private:
             house_1{},
             house_2{},
             house_3{},
-            box{};
+            box{},
+            tovar_icon_0{},
+            tovar_icon_1{},
+            tovar_icon_2{};
 
     Music   mus{};
 };

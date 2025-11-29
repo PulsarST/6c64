@@ -6,31 +6,24 @@
 
 #include <complex>
 
-Bullet::Bullet(
-    const vec2 position,
-    const float angle,
-    const float radius,
-    const float speed)
-: position(position),angle(angle), radius(radius), speed(speed) {
-    velocity = vec2(0.f, 0.f);
+Bullet::Bullet(vec2 pos, tex2d *source, vec2 target): 
+    KinemAABB(
+        pos - (vec2){16.f,16.f}, 
+        (vec2){32.f, 32.f}, 
+        CollisionType_SOLID,
+        0.5f, 
+        0.1f
+    ),
+    source(source)
+{
+    vel = 2.f * METER * norm(target - pos);
 }
 
-void Bullet::update(float deltaTime) {
-    move(deltaTime);
+void Bullet::process(float dt) {
+    vel.y += GRAV * dt;
+    KinemAABB::process(dt);
 }
 
-void Bullet::draw() {
-    DrawCircle(position.x, position.y , radius, WHITE);
-}
-
-void Bullet::move(float deltaTime) {
-    velocity.x = std::cos(RAD2DEG * angle);
-    velocity.y = std::sin(RAD2DEG * angle);
-
-    position.x = velocity.x * speed * deltaTime;
-    position.y = velocity.y * speed * deltaTime;
-}
-
-Bullet::~Bullet() {
-
+void Bullet::draw(vec2 &cam_pos) {
+    DrawTextureV(*source, pos-cam_pos, WHITE);
 }

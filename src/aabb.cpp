@@ -37,7 +37,7 @@ CollAABB::CollAABB(
 
 void CollAABB::colideWith(
     CollAABB *other, 
-    float &&dt
+    float dt
 ){
     if(!isColliding(other))return;
     // if(__resolved__ || other->__resolved__)return;
@@ -61,64 +61,101 @@ void CollAABB::colideWith(
 
     // DrawCircleV(center, 5.f, RED);
     // DrawCircleV(other_center, 5.f, GREEN);
-    
-    if(abs_x > abs_y){
-        bool top_wall;
-        if(center.y > other_center.y){
-            top_wall = 1;
-            float final_resolution = lerp(other->pos.y + other->size.y,pos.y,mass / (mass + other->mass));
-            pos.y = final_resolution;
-            other->pos.y = final_resolution - other->size.y;
-            touchedCeiling();
-            other->touchedFloor();
-        }
-        else{
-            top_wall = 0;
-            float final_resolution = lerp(other->pos.y - size.y,pos.y,mass / (mass + other->mass));
-            pos.y = final_resolution;
-            other->pos.y = final_resolution + size.y;
-            touchedFloor();
-            other->touchedCeiling();
-        }
-        vec2 real_vel = (pos - old_pos)/dt,
-              other_real_vel = (other->pos - other_old_pos)/dt;
 
-        if(this_vel != nullptr)
-            other->pos.x += this_vel->x * (mass / (mass + other->mass)) * dt;
-        if(other_vel != nullptr)
-            pos.x += other_vel->x * (other->mass / (mass + other->mass)) * dt;
-        if(this_vel != nullptr && __signbitf(this_vel->y) == top_wall && dt != 0)
-            this_vel->y = lerp(this_vel->y, boyancy_k*real_vel.y, other->mass / (mass + other->mass));
-        if(other_vel != nullptr && __signbitf(this_vel->y) != top_wall && dt != 0)
-            other_vel->y = lerp(other_vel->y, other->boyancy_k*other_real_vel.y/dt, mass / (mass + other->mass));
-    }
-    else if(abs_x < abs_y){
+    float abs_left_wall = abs(pos.x - other->pos.x - other->size.x);
+    float abs_right_wall = abs(pos.x + size.x - other->pos.x);
+    float abs_ceiling = abs(pos.y - other->pos.y - other->size.y);
+    float abs_floor = abs(pos.y + size.y - other->pos.y);
+
+    float this_weight = mass / (mass + other->mass),
+          other_weight = other->mass / (mass + other->mass);
+
+    // std::cout << abs_left_wall << ' ' << abs_right_wall << ' ' << abs_ceiling << ' ' << abs_floor << '\n';
+
+    // HITS LEFT WALL
+    if(abs_left_wall < abs_right_wall && abs_left_wall < abs_ceiling && abs_left_wall < abs_floor){
+        // std::cout << "left wall hit\n";
         touchedWall();
         other->touchedWall();
-        bool left_wall;
-        if(center.x > other_center.x){
-            left_wall = 1;
-            float final_resolution = lerp(other->pos.x + other->size.x,pos.x,mass / (mass + other->mass));
-            pos.x = final_resolution;
-            other->pos.x = final_resolution - other->size.x;
-        }
-        else{
-            left_wall = 0;
-            float final_resolution = lerp(other->pos.x - size.x,pos.x,mass / (mass + other->mass));
-            pos.x = final_resolution;
-            other->pos.x = final_resolution + size.x;
-        }
+
+        float final_resolution = lerp(other->pos.x + other->size.x,pos.x,this_weight);
+        pos.x = final_resolution;
+        other->pos.x = final_resolution - other->size.x;
+
         vec2 real_vel = (pos - old_pos)/dt,
               other_real_vel = (other->pos - other_old_pos)/dt;
 
         if(this_vel != nullptr)
-            other->pos.y += this_vel->y * (mass / (mass + other->mass)) * dt;
+            other->pos.y += this_vel->y * (this_weight) * dt;
         if(other_vel != nullptr)
-            pos.y += other_vel->y * (other->mass / (mass + other->mass)) * dt;
-        if(this_vel != nullptr && __signbitf(this_vel->x) == left_wall && dt != 0)
-            this_vel->x = lerp(this_vel->x, boyancy_k*real_vel.x, other->mass / (mass + other->mass));
-        if(other_vel != nullptr && __signbitf(other_vel->x) != left_wall && dt != 0)
-            other_vel->x = lerp(other_vel->x, other->boyancy_k*other_real_vel.x/dt, mass / (mass + other->mass));
+            pos.y += other_vel->y * (other_weight) * dt;
+        if(this_vel != nullptr && __signbitf(this_vel->x) == 1 && dt != 0)
+            this_vel->x = lerp(this_vel->x, boyancy_k*real_vel.x, other_weight);
+        if(other_vel != nullptr && __signbitf(other_vel->x) != 1 && dt != 0)
+            other_vel->x = lerp(other_vel->x, other->boyancy_k*other_real_vel.x/dt, this_weight);
+    }
+    // RIGHT WALL HIT
+    else if(abs_right_wall < abs_left_wall && abs_right_wall < abs_ceiling && abs_right_wall < abs_floor){
+        // std::cout << "right wall hit\n";
+        touchedWall();
+        other->touchedWall();
+
+        float final_resolution = lerp(other->pos.x - size.x,pos.x,this_weight);
+        pos.x = final_resolution;
+        other->pos.x = final_resolution + size.x;
+
+        vec2 real_vel = (pos - old_pos)/dt,
+              other_real_vel = (other->pos - other_old_pos)/dt;
+
+        if(this_vel != nullptr)
+            other->pos.y += this_vel->y * (this_weight) * dt;
+        if(other_vel != nullptr)
+            pos.y += other_vel->y * (other_weight) * dt;
+        if(this_vel != nullptr && __signbitf(this_vel->x) == 0 && dt != 0)
+            this_vel->x = lerp(this_vel->x, boyancy_k*real_vel.x, other_weight);
+        if(other_vel != nullptr && __signbitf(other_vel->x) != 0 && dt != 0)
+            other_vel->x = lerp(other_vel->x, other->boyancy_k*other_real_vel.x/dt, this_weight);
+    }
+    else if(abs_ceiling < abs_left_wall && abs_ceiling < abs_right_wall && abs_ceiling < abs_floor){
+        // std::cout << "ceiling hit\n";
+        touchedCeiling();
+        other->touchedFloor();
+        float final_resolution = lerp(other->pos.y + other->size.y,pos.y,this_weight);
+        pos.y = final_resolution;
+        other->pos.y = final_resolution - other->size.y;
+
+        vec2 real_vel = (pos - old_pos)/dt,
+              other_real_vel = (other->pos - other_old_pos)/dt;
+
+        if(this_vel != nullptr)
+            other->pos.x += this_vel->x * (this_weight) * dt;
+        if(other_vel != nullptr)
+            pos.x += other_vel->x * (other_weight) * dt;
+        if(this_vel != nullptr && __signbitf(this_vel->y) == 1 && dt != 0)
+            this_vel->y = lerp(this_vel->y, boyancy_k*real_vel.y, other_weight);
+        if(other_vel != nullptr && __signbitf(this_vel->y) != 1 && dt != 0)
+            other_vel->y = lerp(other_vel->y, other->boyancy_k*other_real_vel.y/dt, this_weight);
+    }
+    else if(abs_floor < abs_left_wall && abs_floor < abs_right_wall && abs_floor < abs_ceiling){
+        // std::cout << "floor hit\n";
+        touchedFloor();
+        other->touchedCeiling();
+        float final_resolution = lerp(other->pos.y - size.y,pos.y,this_weight);
+        pos.y = final_resolution;
+        other->pos.y = final_resolution + size.y;
+
+        vec2 real_vel = (pos - old_pos)/dt,
+              other_real_vel = (other->pos - other_old_pos)/dt;
+
+        if(this_vel != nullptr)
+            other->pos.x += this_vel->x * (this_weight) * dt;
+        if(other_vel != nullptr)
+            pos.x += other_vel->x * (other_weight) * dt;
+        if(this_vel != nullptr && __signbitf(this_vel->y) == 0 && dt != 0)
+            this_vel->y = lerp(this_vel->y, boyancy_k*real_vel.y, other_weight);
+        if(other_vel != nullptr && __signbitf(this_vel->y) != 0 && dt != 0)
+            other_vel->y = lerp(other_vel->y, other->boyancy_k*other_real_vel.y/dt, this_weight);
+            
     }
 
     // __resolved__ = other->__resolved__ = 1;
@@ -134,6 +171,14 @@ void KinemAABB::process(float dt){
     if(abs(vel.x) < 0.001f)vel.x = 0.f;
     if(abs(vel.y) < 0.001f)vel.y = 0.f;
     pos += vel * dt;
+}
+
+void KinemAABB::colideWith(CollAABB *other, float dt){
+    
+    hit_floor = 0;
+    hit_wall = 0;
+    hit_ceiling = 0;
+    CollAABB::colideWith(other, dt);
 }
 
 vec2 *KinemAABB::getVelocity(){
