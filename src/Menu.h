@@ -5,6 +5,7 @@
 #ifndef PUNKVERSEPROJECT_MENU_H
 #define PUNKVERSEPROJECT_MENU_H
 #include "ILevel.h"
+#include "AnimationSprite.h"
 #include "ui/Button.h"
 
 

@@ -22,7 +22,8 @@ Menu::Menu() : play_button("assets/button.png", "Play", (vec2){.x = WIN_WIDTH / 
 
     vec2 quit_button_size = quit_button.get_size();
 
-    quit_button.set_pos((GetScreenWidth() - quit_button_size.x) / 2, (GetScreenHeight() - quit_button_size.y) / 2 + 120);
+    quit_button.set_pos((GetScreenWidth() - quit_button_size.x) / 2,
+                        (GetScreenHeight() - quit_button_size.y) / 2 + 120);
 
     play_button.set_on_click([]() {
         currentLevel = LEVEL1;
