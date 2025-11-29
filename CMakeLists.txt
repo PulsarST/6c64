@@ -29,6 +29,8 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Menu.h
         src/AnimationSprite.cpp
         src/AnimationSprite.h
+        src/Dialog.cpp
+        src/Dialog.h
 )
 
 include(FetchContent)
