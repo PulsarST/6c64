@@ -209,7 +209,7 @@ icon(icon)
 
 void Door::draw(vec2 &cam_pos){
     if(icon){
-        DrawTextureV(*icon, pos - cam_pos - (vec2){32.f,32.f*(1.f+sinf(GetTime()))}, WHITE);
+        DrawTextureV(*icon, pos - cam_pos - (vec2){32.f,32.f*(1.f+sinf(GetTime()*2.5f))}, WHITE);
     }
 }
 

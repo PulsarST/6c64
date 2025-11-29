@@ -43,6 +43,9 @@ public:
     static void add_house(World *w, Chunk *c, Level2 *l);
     static void generate_page(World *w, Chunk *c, Level2 *l);
 
+    void onDelivering(Bullet *b);
+    u32 calcScore(Bullet *b);
+
     void draw() override;
 
     void update() override;

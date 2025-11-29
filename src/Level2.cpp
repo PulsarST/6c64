@@ -148,6 +148,20 @@ void Level2::generate_page(World *w, Chunk *c, Level2 *l){
     }
 }
 
+void Level2::onDelivering(Bullet *b){
+    score += calcScore(b);
+}
+u32 Level2::calcScore(Bullet *b){
+    float d = dist(player_cast->pos - b->pos);
+    if(d < METER)
+        return 100;
+    if(d < 2*METER)
+        return 500;
+    if(d < 5*METER)
+        return 1000;
+    return 5000;
+}
+
 Level2::Level2(): ILevel() {
     cam_pos = {0.f, -360.f};
 
@@ -180,8 +194,8 @@ Level2::Level2(): ILevel() {
     player_tex_left = LoadTextureFromImage(player_img_left);
     player_tex_right = LoadTexture("assets/guy_running2.png");
 
-    player_spr_left = AnimationSprite(&player_tex_left, 4, 1, 77, 103, 15.f);
-    player_spr_right = AnimationSprite(&player_tex_right, 4, 1, 77, 103, 15.f);
+    player_spr_left = AnimationSprite(&player_tex_left, 4, 1, 77, 103, 10.f);
+    player_spr_right = AnimationSprite(&player_tex_right, 4, 1, 77, 103, 10.f);
 
     mus = LoadMusicStream("assets/delivery.wav");
 
@@ -322,6 +336,7 @@ void Level2::update() {
         }
         for(auto &j : doors)
             if(i->isColliding(dynamic_cast<AABB*>(j))){
+                onDelivering(i);
                 w.remove(dynamic_cast<Base*>(i));
                 bullets.erase(bullets.begin() + (u64)(&i - bullets.data()));
                 w.remove(dynamic_cast<Base*>(j));
