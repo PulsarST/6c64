@@ -60,6 +60,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "*.m": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "unordered_set": "cpp"
     }
 }

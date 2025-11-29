@@ -3,6 +3,10 @@
 #define CHUNK_SIZE (vec2){3000.f,800.f}
 #define RES (vec2){(float)GetScreenWidth(), (float)GetScreenHeight()}
 #include <unordered_set>
+#include <iostream>
+#include <memory>
+
+#define ptr std::shared_ptr
 
 struct Chunk;
 
@@ -14,19 +18,20 @@ struct Base{
     Base(vec2 pos): pos(pos){}
 
      virtual void process(float dt){};
-     virtual void draw(vec2 &cam_pos){};
+     virtual void draw(vec2 &cam_pos, tex2d *t = nullptr){
+        if(!t)return;
+        DrawTextureV(*t, pos - cam_pos, WHITE);
+     };
 };
 
 struct Chunk{
         const i32 pos;
         Chunk *top = nullptr;
         Chunk *bottom = nullptr;
-        std::unordered_set<Base*> in_chunk;
+        std::unordered_set<ptr<Base>> in_chunk;
 
         Chunk(i32 pos): pos(pos){}
         ~Chunk(){
-            for(auto &i : in_chunk)
-                delete i;
             delete top;
             delete bottom;
         }
@@ -39,19 +44,32 @@ struct World{
     vec2 *cam_target = nullptr;
     vec2 cam_pos;
 
-    std::unordered_set<Base*> active;
+    std::unordered_set<ptr<Base>> active;
+
+    std::function<void(World*)> on_reaching_top;
+    std::function<void(World*)> on_reaching_bottom;
 
     World(){
+        on_reaching_top = [](World* w){};
+        on_reaching_bottom = [](World* w){};
         cam_pos = {0.f,0.f};
         root = new Chunk(0);
+        current = root;
     }
 
-    void add(Base *item, Chunk *c){
+    void add(ptr<Base> item, Chunk *c){
+        if(!item)return;
+        if(!c)return;
         c->in_chunk.insert(item);
         item->pos.y += c->pos * CHUNK_SIZE.y;
+        item->chunk = c;
+        if(c == current){
+            active.insert(item);
+        }
     }
 
     void process(float dt){
+        if(current == nullptr)return;
         if(cam_target)
             cam_pos = lerp(
                 cam_pos, 
@@ -67,16 +85,23 @@ struct World{
                 if(i->chunk == current->bottom)
                     active.erase(i);
             }
+            if(!current->top){
+                on_reaching_top(this);
+            }
             if(current->top){
                 current = current->top;
                 for(auto &i : current->in_chunk)
-                        active.insert(i);
+                    active.insert(i);
             }
+            
         }
         else if(cam_pos.y >= current->pos+1 * CHUNK_SIZE.y){
             for(auto &i : active){
                 if(i->chunk == current)
                     active.erase(i);
+            }
+            if(!current->bottom){
+                on_reaching_bottom(this);
             }
             if(current->bottom){
                 current = current->bottom;
@@ -88,14 +113,14 @@ struct World{
             i->process(dt);
         }
     }
-    void draw(){
+    void draw(tex2d &t){
         for(auto &i : active){
-            i->draw(cam_pos);
+            i->draw(cam_pos, &t);
         }
     }
 
    ~World(){
         delete root;
-    }
+   }
    
 };

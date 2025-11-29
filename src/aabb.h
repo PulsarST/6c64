@@ -55,9 +55,18 @@ struct KinemAABB: CollAABB{
         float boyancy_k = 0.f
     );
 
+    virtual void process(float dt) override;
     virtual vec2 *getVelocity() override;
 
     virtual void touchedFloor() override;
     virtual void touchedWall() override;
     virtual void touchedCeiling() override;
+};
+
+struct StaticSprite: Base{
+    tex2d   *source;
+
+    StaticSprite(vec2 pos, tex2d *source);
+
+    virtual void draw(vec2 &cam_pos, tex2d *t = nullptr) override;
 };

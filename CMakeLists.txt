@@ -18,8 +18,6 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Level2.h
         src/Level3.cpp
         src/Level3.h
-        src/Player.cpp
-        src/Player.h
         src/Bullet.cpp
         src/Bullet.h
         src/aabb.cpp

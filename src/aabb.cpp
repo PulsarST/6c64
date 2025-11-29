@@ -45,6 +45,10 @@ void CollAABB::colideWith(
 
     vec2 *this_vel = getVelocity(),
          *other_vel = other->getVelocity();
+    
+    if(this_vel && 
+        other->coll_type == CollisionType_PLATFORM && 
+        (pos.y+size.y) - (this_vel->y*dt) > other->pos.y+0.001f)return;
 
     vec2 old_pos = pos;
     vec2 other_old_pos = other->pos;
@@ -52,8 +56,8 @@ void CollAABB::colideWith(
     vec2 center = (size * 0.5f) + pos;
     vec2 other_center = (other->size * 0.5f) + other->pos;
 
-    float abs_x = abs(center.y - other_center.y),
-            abs_y = abs(center.x - other_center.x);
+    float abs_x = abs(center.y - other_center.y)/other->size.y,
+            abs_y = abs(center.x - other_center.x)/other->size.x;
 
     // DrawCircleV(center, 5.f, RED);
     // DrawCircleV(other_center, 5.f, GREEN);
@@ -126,6 +130,12 @@ CollAABB(pos, size, coll_type, mass, boyancy_k),
 vel((vec2){0.f, 0.f})
 {}
 
+void KinemAABB::process(float dt){
+    if(abs(vel.x) < 0.001f)vel.x = 0.f;
+    if(abs(vel.y) < 0.001f)vel.y = 0.f;
+    pos += vel * dt;
+}
+
 vec2 *KinemAABB::getVelocity(){
     return &vel;
 }
@@ -133,3 +143,9 @@ vec2 *KinemAABB::getVelocity(){
 void KinemAABB::touchedFloor(){hit_floor = 1;}
 void KinemAABB::touchedWall(){hit_wall = 1;}
 void KinemAABB::touchedCeiling(){hit_ceiling = 1;}
+
+StaticSprite::StaticSprite(vec2 pos, tex2d *source): Base(pos), source(source){}
+
+void StaticSprite::draw(vec2 &cam_pos, tex2d *t){
+    DrawTextureV(*source, pos-cam_pos, WHITE);
+}

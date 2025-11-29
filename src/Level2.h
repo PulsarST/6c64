@@ -9,7 +9,17 @@
 #include "aabb.h"
 #include <vector>
 
-void static control(vec2 &p){
+void static control4(vec2 &p){
+    vec2 a = {0,0};
+    a.x += 2.f * METER * IsKeyDown(KEY_D);
+    a.x -= 2.f * METER * IsKeyDown(KEY_A);
+    a.y += 2.f * METER * IsKeyDown(KEY_S);
+    a.y -= 2.f * METER * IsKeyDown(KEY_W);
+
+    p = a;
+}
+
+void static control2(vec2 &p){
     vec2 a = {0,0};
     a.x += 2.f * METER * IsKeyDown(KEY_D);
     a.x -= 2.f * METER * IsKeyDown(KEY_A);
@@ -20,6 +30,17 @@ void static control(vec2 &p){
 class Level2 final : public ILevel{
 public:
     Level2();
+
+    static void house0(World *w, Chunk *c, Level2 *l);
+
+    static void house1(World *w, Chunk *c, Level2 *l);
+
+    static void house2(World *w, Chunk *c, Level2 *l);
+
+    static void house3(World *w, Chunk *c, Level2 *l);
+
+    static void add_house(World *w, Chunk *c, Level2 *l);
+    static void generate_page(World *w, Chunk *c, Level2 *l);
 
     void draw() override;
 
@@ -32,6 +53,8 @@ private:
 
     ParallaxBG bg;
     World   w;
+
+    ptr<Base> player;
 
     tex2d   layer_1{};
     tex2d   layer_2{};

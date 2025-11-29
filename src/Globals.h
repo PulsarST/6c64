@@ -10,6 +10,6 @@
 #define WIN_TITLE "GAME"
 #include "Game.h"
 
-extern inline Level currentLevel = MENU;
+extern inline Level currentLevel = LEVEL2;
 
 #endif //PUNKVERSEPROJECT_GLOBALS_H

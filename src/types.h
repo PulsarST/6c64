@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <cstdint>
+#include <functional>
 
 typedef                     int8_t                i8;
 typedef                     uint8_t               u8;
