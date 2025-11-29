@@ -25,6 +25,10 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/aabb.cpp
         src/aabb.h
         src/world.h
+        src/ui/Button.cpp
+        src/ui/Button.h
+        src/Menu.cpp
+        src/Menu.h
 )
 
 include(FetchContent)

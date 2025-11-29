@@ -1,3 +1,4 @@
+#pragma once
 #include "types.h"
 #define CHUNK_SIZE (vec2){3000.f,800.f}
 #define RES (vec2){(float)GetScreenWidth(), (float)GetScreenHeight()}

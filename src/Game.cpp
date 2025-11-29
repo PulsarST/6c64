@@ -9,6 +9,7 @@
 #include "Level1.h"
 #include "Level2.h"
 #include "Level3.h"
+#include "Menu.h"
 
 Game::Game(): levels(5) {
     InitWindow(1280, 720, "Hello World");
@@ -27,6 +28,7 @@ Game::Game(): levels(5) {
 
     deltaTime = 0;
 
+    levels[MENU] = std::make_unique<Menu>();
     levels[LEVEL1] = std::make_unique<Level1>();
     levels[LEVEL2] = std::make_unique<Level2>();
     levels[LEVEL3] = std::make_unique<Level3>();
