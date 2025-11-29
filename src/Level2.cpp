@@ -39,12 +39,14 @@ void Level2::house0(World *w, Chunk *c, Level2 *l){
         (vec2){153,31}
         ,CollisionType_PLATFORM
     ), c);
-    l->doors.push_back(new Door(
-        (vec2){354,227}+rand_pos,
-        (vec2){7,64}, rand()%6,
-        &l->want_food
-    ));
-    w->add(dynamic_cast<Base*>(l->doors.back()), c);
+    if(!(rand()%6)){
+        l->doors.push_back(new Door(
+            (vec2){354,227}+rand_pos,
+            (vec2){7,64},
+            &l->want_food
+        ));
+        w->add(dynamic_cast<Base*>(l->doors.back()), c);
+    }
 }
 
 void Level2::house1(World *w, Chunk *c, Level2 *l){
@@ -61,12 +63,14 @@ void Level2::house1(World *w, Chunk *c, Level2 *l){
         (vec2){415,39}
         ,CollisionType_PLATFORM
     ), c);
-    l->doors.push_back(new Door(
-        (vec2){470,354}+rand_pos,
-        (vec2){22,65}, rand()%6,
-        &l->want_food
-    ));
-    w->add(dynamic_cast<Base*>(l->doors.back()), c);
+    if(!(rand()%6)){
+        l->doors.push_back(new Door(
+            (vec2){470,354}+rand_pos,
+            (vec2){22,65},
+            &l->want_food
+        ));
+        w->add(dynamic_cast<Base*>(l->doors.back()), c);
+    }
 }
 
 void Level2::house2(World *w, Chunk *c, Level2 *l){
@@ -83,12 +87,14 @@ void Level2::house2(World *w, Chunk *c, Level2 *l){
         (vec2){263,15}
         ,CollisionType_PLATFORM
     ), c);
+    if(!(rand()%6)){
     l->doors.push_back(new Door(
         (vec2){390,395}+rand_pos,
-        (vec2){17,62}, rand()%6,
+        (vec2){17,62},
         &l->want_food
     ));
     w->add(dynamic_cast<Base*>(l->doors.back()), c);
+}
 }
 
 void Level2::house3(World *w, Chunk *c, Level2 *l){
@@ -147,6 +153,7 @@ Level2::Level2(): ILevel() {
 
     dirizhabl_left_img = LoadImage("assets/dirizhabl.png");
     dirizhabl_right_img = LoadImage("assets/dirizhabl.png");
+    player_img_left = LoadImage("assets/guy_running2.png");
 
     layer_1 = LoadTexture("assets/level_2_bg_base.png");
     layer_2 = LoadTexture("assets/level_2_bg_front.png");
@@ -165,9 +172,16 @@ Level2::Level2(): ILevel() {
     box = LoadTexture("assets/ball.png");
 
     ImageFlipHorizontal(&dirizhabl_right_img);
+    ImageFlipHorizontal(&player_img_left);
 
     dirizhabl_left = LoadTextureFromImage(dirizhabl_left_img);
     dirizhabl_right = LoadTextureFromImage(dirizhabl_right_img);
+
+    player_tex_left = LoadTextureFromImage(player_img_left);
+    player_tex_right = LoadTexture("assets/guy_running2.png");
+
+    player_spr_left = AnimationSprite(&player_tex_left, 4, 1, 77, 103, 15.f);
+    player_spr_right = AnimationSprite(&player_tex_right, 4, 1, 77, 103, 15.f);
 
     mus = LoadMusicStream("assets/delivery.wav");
 
@@ -223,18 +237,23 @@ void Level2::draw(){
     //     DrawTextureV(box,i.pos-cam_pos,WHITE);
     // }   
     w.draw();
-    DrawTextureV(box, player_cast->pos-w.cam_pos - (vec2){22.f, 0.f}, WHITE);
+
+    if(player_anim)
+        player_spr_left.draw(w.cam_pos);
+    else
+        player_spr_right.draw(w.cam_pos);
     DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 20, WHITE);
     DrawText(("COUNT "+std::to_string(zakasi)).c_str(), 20, 60, 20, WHITE);
 }
 
 void Level2::update() {
+    float dt = GetFrameTime();
     // std::cout << "start\n";
     if(!IsMusicStreamPlaying(mus))
         PlayMusicStream(mus);
     UpdateMusicStream(mus);
 
-    dirizhabl_timer += GetFrameTime();
+    dirizhabl_timer += dt;
     if(dirizhabl_timer >= 4.f){
         bool from_left = rand()%2;
         dirizhabls.push_back(
@@ -254,14 +273,25 @@ void Level2::update() {
     }
 
     // std::cout << "jumps\n";
-    player_cast->vel.y += GRAV * GetFrameTime();
+    player_cast->vel.y += GRAV * dt;
     control2(player_cast->vel);
+    if(IsKeyPressed(KEY_A))
+        player_anim = 1;
+    if(IsKeyPressed(KEY_D))
+        player_anim = 0;
+
+    player_spr_left.process(dt*(player_cast->vel.x != 0));
+    player_spr_right.process(dt*(player_cast->vel.x != 0));
+    player_spr_left.pos = player_cast->pos - (vec2){22.f,0.f};
+    player_spr_right.pos = player_cast->pos - (vec2){22.f,0.f};
 
     if(zakasi && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
         zakasi--;
         // std::cout << player_cast->pos.x << ' ' << player_cast->pos.y << '\n';
         bullets.push_back(new Bullet(player_cast->pos + (vec2){16.f,16.f}, &tovar_icon_0,
             w.cam_pos + GetMousePosition()));
+
+        bullets.back()->vel += player_cast->vel*0.4f;
             
         w.add(bullets.back(), w.current, 1);
         bullets.back()->pos.y -= (CHUNK_SIZE.y*w.current->pos);
@@ -270,12 +300,12 @@ void Level2::update() {
     }
 
     // std::cout << "process world\n";
-    w.process(GetFrameTime());
+    w.process(dt);
 
     // std::cout << "player collides with active\n";
     for(auto &i : w.active){
         if(dynamic_cast<Bullet*>(i))continue;
-        player_cast->colideWith(dynamic_cast<CollAABB*>(i), GetFrameTime());
+        player_cast->colideWith(dynamic_cast<CollAABB*>(i), dt);
     }
     
     // std::cout << "bullets collide with active\n";
@@ -288,7 +318,7 @@ void Level2::update() {
     for(auto &i : bullets){
         for(auto &j : w.active){
             if(j == player)continue;
-            i->colideWith(dynamic_cast<CollAABB*>(j), GetFrameTime());
+            i->colideWith(dynamic_cast<CollAABB*>(j), dt);
         }
         for(auto &j : doors)
             if(i->isColliding(dynamic_cast<AABB*>(j))){
@@ -298,14 +328,23 @@ void Level2::update() {
                 doors.erase(doors.begin() + (u64)(&j - doors.data()));
             }
     }
-    if(player_cast->vel.y == 0.f && IsKeyPressed(KEY_SPACE))
-        player_cast->vel.y = -5.f * METER;
+    if(player_cast->vel.y == 0.f && IsKeyPressed(KEY_SPACE)){
+        if(IsKeyDown(KEY_S)){
+            player_cast->pos.y += 1.f;
+            player_cast->vel.y = METER;
+        }
+        else
+            player_cast->vel.y = -5.f * METER;
+    }
+    if(IsKeyReleased(KEY_SPACE) && player_cast->vel.y < 0.f)
+        player_cast->vel.y *= 0.5f;
     // std::cout << "done\n";
 }
 
 Level2::~Level2() {
     UnloadImage(dirizhabl_left_img);
     UnloadImage(dirizhabl_right_img);
+    UnloadImage(player_img_left);
 
     UnloadTexture(box);
     UnloadTexture(layer_1);
@@ -324,6 +363,9 @@ Level2::~Level2() {
 
     UnloadTexture(dirizhabl_left);
     UnloadTexture(dirizhabl_right);
+
+    UnloadTexture(player_tex_left);
+    UnloadTexture(player_tex_right);
 
     UnloadMusicStream(mus);
 

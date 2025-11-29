@@ -77,11 +77,10 @@ struct StaticSprite: Base{
 };
 
 struct Door: AABB{
-    bool wants_food;
     tex2d *icon = nullptr;
 
     Door(){}
-    Door(vec2 pos, vec2 size, bool wants_food, tex2d *icon = nullptr);
+    Door(vec2 pos, vec2 size, tex2d *icon = nullptr);
 
     void draw(vec2 &cam_pos) override;
 };

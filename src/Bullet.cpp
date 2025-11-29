@@ -8,8 +8,8 @@
 
 Bullet::Bullet(vec2 pos, tex2d *source, vec2 target): 
     KinemAABB(
-        pos - (vec2){16.f,16.f}, 
-        (vec2){32.f, 32.f}, 
+        pos - (vec2){24.f,24.f}, 
+        (vec2){48.f, 48.f}, 
         CollisionType_SOLID,
         0.5f, 
         0.1f

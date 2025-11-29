@@ -6,8 +6,8 @@
 
 #include <iostream>
 
-AnimationSprite::AnimationSprite(const std::string &fileName, int cellCountX, int cellCountY, int cellSizeX, int cellSizeY,
-               float speed) : texture(LoadTexture(fileName.c_str())), cellCount(cellCountX, cellCountY),
+AnimationSprite::AnimationSprite(tex2d *source, int cellCountX, int cellCountY, int cellSizeX, int cellSizeY,
+               float speed) : source(source), cellCount(cellCountX, cellCountY),
                               cellSize(cellSizeX, cellSizeY), animationSpeed(speed) {
 
     rect.width = cellSizeX;
@@ -15,7 +15,21 @@ AnimationSprite::AnimationSprite(const std::string &fileName, int cellCountX, in
 }
 
 void AnimationSprite::draw(vec2 &cam_pos) {
-    DrawRectangle(pos.x - cam_pos.x, pos.y - cam_pos.y, rect.width, rect.height, WHITE);
+    // DrawRectangle(pos.x - cam_pos.x, pos.y - cam_pos.y, rect.width, rect.height, WHITE);
+    if(source)
+    DrawTexturePro(
+        *source,
+        rect,
+        (Rectangle){
+            pos.x - cam_pos.x,
+            pos.y - cam_pos.y,
+            rect.width,
+            rect.height
+        },
+        {0.f, 0.f},
+        0.f,
+        WHITE
+    );
 }
 
 void AnimationSprite::process(float deltaTime) {
@@ -32,9 +46,5 @@ void AnimationSprite::process(float deltaTime) {
         rect.x = currentCellX * cellSize.x;
         rect.y = currentCellY * cellSize.y;
     }
-}
-
-AnimationSprite::~AnimationSprite() {
-    UnloadTexture(texture);
 }
 

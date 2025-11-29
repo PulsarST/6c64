@@ -48,7 +48,7 @@ void CollAABB::colideWith(
     
     if(this_vel && 
         other->coll_type == CollisionType_PLATFORM && 
-        (pos.y+size.y) - (this_vel->y*dt) > other->pos.y+0.001f)return;
+        (pos.y+size.y) - (this_vel->y*dt) > other->pos.y+0.01f)return;
 
     vec2 old_pos = pos;
     vec2 other_old_pos = other->pos;
@@ -153,11 +153,11 @@ void CollAABB::colideWith(
             pos.x += other_vel->x * (other_weight) * dt;
         if(this_vel != nullptr && __signbitf(this_vel->y) == 0 && dt != 0){
             this_vel->y = lerp(this_vel->y, boyancy_k*real_vel.y, other_weight);
-            this_vel->x *= powf(0.8f,dt*30.f);
+            this_vel->x *= lerp(powf(0.8f,dt*30.f),1.f, this_weight);
         }
         if(other_vel != nullptr && __signbitf(this_vel->y) != 0 && dt != 0){
             other_vel->y = lerp(other_vel->y, other->boyancy_k*other_real_vel.y/dt, this_weight);
-            other_vel->x *= powf(0.8f,dt*30.f);
+            other_vel->x *= lerp(powf(0.8f,dt*30.f), 1.f, other_weight);
         }
             
     }
@@ -201,15 +201,14 @@ void StaticSprite::draw(vec2 &cam_pos){
     DrawTextureV(*source, pos-cam_pos, WHITE);
 }
 
-Door::Door(vec2 pos, vec2 size, bool wants_food, tex2d *icon): AABB(pos, size),
-wants_food(wants_food),
+Door::Door(vec2 pos, vec2 size, tex2d *icon): AABB(pos, size),
 icon(icon)
 {
     z = 20;
 }
 
 void Door::draw(vec2 &cam_pos){
-    if(icon && wants_food){
+    if(icon){
         DrawTextureV(*icon, pos - cam_pos - (vec2){32.f,32.f*(1.f+sinf(GetTime()))}, WHITE);
     }
 }

@@ -13,18 +13,16 @@
 
 class AnimationSprite final: public Base {
 public:
-    AnimationSprite() = delete;
-    explicit AnimationSprite(const std::string &fileName, int cellCountX, int cellCountY, int cellSizeX, int cellSizeY,
+    AnimationSprite() = default;
+    explicit AnimationSprite(tex2d *source, int cellCountX, int cellCountY, int cellSizeX, int cellSizeY,
                     float speed);
 
     void draw(vec2 &cam_pos) override;
 
     void process(float deltaTime) override;
 
-    ~AnimationSprite();
-
 private:
-    Texture2D texture;
+    tex2d *source;
     Rectangle rect{};
     vec2 cellCount;
     vec2 cellSize;

@@ -7,6 +7,7 @@
 #include "ILevel.h"
 #include "ParallaxBg.h"
 #include "Bullet.h"
+#include "AnimationSprite.h"
 #include <vector>
 
 void static control4(vec2 &p){
@@ -59,6 +60,7 @@ private:
 
     Base *player;
     KinemAABB *player_cast;
+    bool player_anim = 0.f;
 
     float dirizhabl_timer = 0.f;
 
@@ -70,7 +72,8 @@ private:
     tex2d   layer_2{};
 
     Image dirizhabl_left_img{},
-          dirizhabl_right_img{};
+          dirizhabl_right_img{},
+          player_img_left{};
 
     tex2d   house_0{},
             house_1{},
@@ -82,7 +85,12 @@ private:
             tovar_icon_2{},
             want_food{},
             dirizhabl_left{},
-            dirizhabl_right{};
+            dirizhabl_right{},
+            player_tex_left{},
+            player_tex_right{};
+
+    AnimationSprite player_spr_left,
+                    player_spr_right;
 
     Music   mus{};
 };
