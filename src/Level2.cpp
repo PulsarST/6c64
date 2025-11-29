@@ -123,7 +123,6 @@ Level2::~Level2() {
     UnloadTexture(box);
     UnloadTexture(layer_1);
     UnloadTexture(layer_2);
-    UnloadTexture(layer_3);
     UnloadMusicStream(mus);
 }
 
