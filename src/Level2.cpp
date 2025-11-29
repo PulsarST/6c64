@@ -119,7 +119,7 @@ void Level2::house3(World *w, Chunk *c, Level2 *l){
     l->doors.push_back(
         new Door(
         (vec2){481,208}+rand_pos,
-        (vec2){40,101}, rand()%6,
+        (vec2){40,101},
         &l->want_food
         )
     );
