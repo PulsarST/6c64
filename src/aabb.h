@@ -1,8 +1,7 @@
-#include "types.h"
+#include "world.h"
 #include <cmath>
 
-struct AABB{
-    vec2 pos;
+struct AABB: Base{
     vec2 size;
 
     AABB(vec2 pos, vec2 size);

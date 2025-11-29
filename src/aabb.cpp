@@ -2,7 +2,7 @@
 #include <iostream>
 
 AABB::AABB(vec2 pos, vec2 size):
-    pos(pos), size(size)
+    Base(pos), size(size)
 {}
 
 bool AABB::isColliding(AABB *other){
