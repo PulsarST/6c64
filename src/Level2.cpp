@@ -39,6 +39,12 @@ void Level2::house0(World *w, Chunk *c, Level2 *l){
         (vec2){153,31}
         ,CollisionType_PLATFORM
     ), c);
+    l->doors.push_back(new Door(
+        (vec2){354,227}+rand_pos,
+        (vec2){7,64}, rand()%6,
+        &l->want_food
+    ));
+    w->add(dynamic_cast<Base*>(l->doors.back()), c);
 }
 
 void Level2::house1(World *w, Chunk *c, Level2 *l){
@@ -55,6 +61,12 @@ void Level2::house1(World *w, Chunk *c, Level2 *l){
         (vec2){415,39}
         ,CollisionType_PLATFORM
     ), c);
+    l->doors.push_back(new Door(
+        (vec2){470,354}+rand_pos,
+        (vec2){22,65}, rand()%6,
+        &l->want_food
+    ));
+    w->add(dynamic_cast<Base*>(l->doors.back()), c);
 }
 
 void Level2::house2(World *w, Chunk *c, Level2 *l){
@@ -71,6 +83,12 @@ void Level2::house2(World *w, Chunk *c, Level2 *l){
         (vec2){263,15}
         ,CollisionType_PLATFORM
     ), c);
+    l->doors.push_back(new Door(
+        (vec2){390,395}+rand_pos,
+        (vec2){17,62}, rand()%6,
+        &l->want_food
+    ));
+    w->add(dynamic_cast<Base*>(l->doors.back()), c);
 }
 
 void Level2::house3(World *w, Chunk *c, Level2 *l){
@@ -92,6 +110,14 @@ void Level2::house3(World *w, Chunk *c, Level2 *l){
         (vec2){199,13}
         ,CollisionType_PLATFORM
     ), c);
+    l->doors.push_back(
+        new Door(
+        (vec2){481,208}+rand_pos,
+        (vec2){40,101}, rand()%6,
+        &l->want_food
+        )
+    );
+    w->add(dynamic_cast<Base*>(l->doors.back()), c);
 }
 
 void Level2::add_house(World *w, Chunk *c, Level2 *l){
@@ -119,6 +145,9 @@ void Level2::generate_page(World *w, Chunk *c, Level2 *l){
 Level2::Level2(): ILevel() {
     cam_pos = {0.f, -360.f};
 
+    dirizhabl_left_img = LoadImage("assets/dirizhabl.png");
+    dirizhabl_right_img = LoadImage("assets/dirizhabl.png");
+
     layer_1 = LoadTexture("assets/level_2_bg_base.png");
     layer_2 = LoadTexture("assets/level_2_bg_front.png");
 
@@ -131,9 +160,19 @@ Level2::Level2(): ILevel() {
     tovar_icon_1 = LoadTexture("assets/test_bullet.png");
     tovar_icon_2 = LoadTexture("assets/test_bullet.png");
 
+    want_food = LoadTexture("assets/want_food.png");
+
     box = LoadTexture("assets/ball.png");
 
+    ImageFlipHorizontal(&dirizhabl_right_img);
+
+    dirizhabl_left = LoadTextureFromImage(dirizhabl_left_img);
+    dirizhabl_right = LoadTextureFromImage(dirizhabl_right_img);
+
     mus = LoadMusicStream("assets/delivery.wav");
+
+    score = 0;
+    zakasi = 15;
 
     vec2 parallax_coeffs[PARALLAX_LAYERS_COUNT] = {
         {0.1f, 0.1f},
@@ -157,10 +196,12 @@ Level2::Level2(): ILevel() {
 
     player = new KinemAABB(
         (vec2){1500.f, -300.f},
-        (vec2){64.f, 86.f},
+        (vec2){32.f, 103.f},
         CollisionType_SOLID,
         1.f);
+
     player_cast = dynamic_cast<KinemAABB*>(player);
+    
     w.add(
         player,
         w.current
@@ -182,7 +223,9 @@ void Level2::draw(){
     //     DrawTextureV(box,i.pos-cam_pos,WHITE);
     // }   
     w.draw();
-    DrawTextureV(box, player_cast->pos-w.cam_pos, WHITE);
+    DrawTextureV(box, player_cast->pos-w.cam_pos - (vec2){22.f, 0.f}, WHITE);
+    DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 20, WHITE);
+    DrawText(("COUNT "+std::to_string(zakasi)).c_str(), 20, 60, 20, WHITE);
 }
 
 void Level2::update() {
@@ -191,17 +234,39 @@ void Level2::update() {
         PlayMusicStream(mus);
     UpdateMusicStream(mus);
 
+    dirizhabl_timer += GetFrameTime();
+    if(dirizhabl_timer >= 4.f){
+        bool from_left = rand()%2;
+        dirizhabls.push_back(
+            new Dirizhabl(
+                player->pos.y - (rand()%200 - 50),
+                from_left,
+                from_left ? &dirizhabl_right : &dirizhabl_left
+            )
+        );
+        dirizhabls.back()->pos.y -= w.current->pos * CHUNK_SIZE.y;
+        w.add(
+            dirizhabls.back(),
+            w.current,
+            1
+        );
+        dirizhabl_timer = 0.f;
+    }
+
     // std::cout << "jumps\n";
     player_cast->vel.y += GRAV * GetFrameTime();
     control2(player_cast->vel);
 
-    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-        std::cout << player_cast->pos.x << ' ' << player_cast->pos.y << '\n';
-        bullets.push_back(new Bullet(player_cast->pos + (vec2){32.f,32.f}, &tovar_icon_0,
+    if(zakasi && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+        zakasi--;
+        // std::cout << player_cast->pos.x << ' ' << player_cast->pos.y << '\n';
+        bullets.push_back(new Bullet(player_cast->pos + (vec2){16.f,16.f}, &tovar_icon_0,
             w.cam_pos + GetMousePosition()));
-        bullets.back()->pos -= (CHUNK_SIZE*w.current->pos);
+            
         w.add(bullets.back(), w.current, 1);
-        std::cout << bullets.back()->pos.x << ' ' << bullets.back()->pos.y << '\n';
+        bullets.back()->pos.y -= (CHUNK_SIZE.y*w.current->pos);
+
+        // std::cout << bullets.back()->pos.x << ' ' << bullets.back()->pos.y << '\n';
     }
 
     // std::cout << "process world\n";
@@ -209,24 +274,29 @@ void Level2::update() {
 
     // std::cout << "player collides with active\n";
     for(auto &i : w.active){
-        bool cont = 0;
-        for(auto &j : bullets)
-            if(i == dynamic_cast<Base*>(j)){
-                cont = 1;
-                break;
-            }
-
-        if(cont)continue;
-        
+        if(dynamic_cast<Bullet*>(i))continue;
         player_cast->colideWith(dynamic_cast<CollAABB*>(i), GetFrameTime());
     }
     
     // std::cout << "bullets collide with active\n";
+    for(auto &i : dirizhabls){
+        if(i->pos.x > CHUNK_SIZE.x+600 || i->pos.x < -600){
+            w.remove(dynamic_cast<Base*>(i));
+            dirizhabls.erase(dirizhabls.begin() + (u64)(&i - dirizhabls.data()));
+        }
+    }
     for(auto &i : bullets){
         for(auto &j : w.active){
             if(j == player)continue;
             i->colideWith(dynamic_cast<CollAABB*>(j), GetFrameTime());
         }
+        for(auto &j : doors)
+            if(i->isColliding(dynamic_cast<AABB*>(j))){
+                w.remove(dynamic_cast<Base*>(i));
+                bullets.erase(bullets.begin() + (u64)(&i - bullets.data()));
+                w.remove(dynamic_cast<Base*>(j));
+                doors.erase(doors.begin() + (u64)(&j - doors.data()));
+            }
     }
     if(player_cast->vel.y == 0.f && IsKeyPressed(KEY_SPACE))
         player_cast->vel.y = -5.f * METER;
@@ -234,6 +304,9 @@ void Level2::update() {
 }
 
 Level2::~Level2() {
+    UnloadImage(dirizhabl_left_img);
+    UnloadImage(dirizhabl_right_img);
+
     UnloadTexture(box);
     UnloadTexture(layer_1);
     UnloadTexture(layer_2);
@@ -246,6 +319,11 @@ Level2::~Level2() {
     UnloadTexture(tovar_icon_0);
     UnloadTexture(tovar_icon_1);
     UnloadTexture(tovar_icon_2);
+
+    UnloadTexture(want_food);
+
+    UnloadTexture(dirizhabl_left);
+    UnloadTexture(dirizhabl_right);
 
     UnloadMusicStream(mus);
 

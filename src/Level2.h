@@ -54,13 +54,23 @@ private:
     ParallaxBG bg;
     World   w;
 
+    u32 score;
+    u32 zakasi;
+
     Base *player;
-    KinemAABB* player_cast;
+    KinemAABB *player_cast;
+
+    float dirizhabl_timer = 0.f;
 
     std::vector<Bullet*> bullets;
+    std::vector<Door*> doors;
+    std::vector<Dirizhabl*> dirizhabls;
 
     tex2d   layer_1{};
     tex2d   layer_2{};
+
+    Image dirizhabl_left_img{},
+          dirizhabl_right_img{};
 
     tex2d   house_0{},
             house_1{},
@@ -69,7 +79,10 @@ private:
             box{},
             tovar_icon_0{},
             tovar_icon_1{},
-            tovar_icon_2{};
+            tovar_icon_2{},
+            want_food{},
+            dirizhabl_left{},
+            dirizhabl_right{};
 
     Music   mus{};
 };

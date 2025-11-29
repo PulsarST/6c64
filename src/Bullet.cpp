@@ -16,7 +16,8 @@ Bullet::Bullet(vec2 pos, tex2d *source, vec2 target):
     ),
     source(source)
 {
-    vel = 2.f * METER * norm(target - pos);
+    z = 10;
+    vel = 5.f * METER * norm(target - pos);
 }
 
 void Bullet::process(float dt) {

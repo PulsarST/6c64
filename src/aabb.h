@@ -6,6 +6,7 @@
 struct AABB: Base{
     vec2 size;
 
+    AABB(){}
     AABB(vec2 pos, vec2 size);
 
     bool isColliding(AABB *o);
@@ -26,6 +27,7 @@ struct CollAABB: AABB{
     float boyancy_k;
     CollType coll_type;
 
+    CollAABB(){}
     CollAABB(
         vec2 pos, 
         vec2 size, 
@@ -47,6 +49,7 @@ struct KinemAABB: CollAABB{
          hit_wall = 0,
          hit_ceiling = 0;
 
+    KinemAABB(){}
     KinemAABB(
         vec2 pos, 
         vec2 size, 
@@ -65,9 +68,30 @@ struct KinemAABB: CollAABB{
 };
 
 struct StaticSprite: Base{
-    tex2d   *source;
+    tex2d   *source = nullptr;
 
+    StaticSprite(){}
     StaticSprite(vec2 pos, tex2d *source);
 
     virtual void draw(vec2 &cam_pos) override;
+};
+
+struct Door: AABB{
+    bool wants_food;
+    tex2d *icon = nullptr;
+
+    Door(){}
+    Door(vec2 pos, vec2 size, bool wants_food, tex2d *icon = nullptr);
+
+    void draw(vec2 &cam_pos) override;
+};
+
+struct Dirizhabl: KinemAABB{
+    tex2d *source = nullptr;
+
+    Dirizhabl(){}
+    Dirizhabl(float height, bool spawn_from_left, tex2d *source = nullptr);
+    
+    void process(float dt) override;
+    void draw(vec2 &cam_pos) override;
 };

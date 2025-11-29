@@ -151,10 +151,14 @@ void CollAABB::colideWith(
             other->pos.x += this_vel->x * (this_weight) * dt;
         if(other_vel != nullptr)
             pos.x += other_vel->x * (other_weight) * dt;
-        if(this_vel != nullptr && __signbitf(this_vel->y) == 0 && dt != 0)
+        if(this_vel != nullptr && __signbitf(this_vel->y) == 0 && dt != 0){
             this_vel->y = lerp(this_vel->y, boyancy_k*real_vel.y, other_weight);
-        if(other_vel != nullptr && __signbitf(this_vel->y) != 0 && dt != 0)
+            this_vel->x *= powf(0.8f,dt*30.f);
+        }
+        if(other_vel != nullptr && __signbitf(this_vel->y) != 0 && dt != 0){
             other_vel->y = lerp(other_vel->y, other->boyancy_k*other_real_vel.y/dt, this_weight);
+            other_vel->x *= powf(0.8f,dt*30.f);
+        }
             
     }
 
@@ -170,6 +174,8 @@ vel((vec2){0.f, 0.f})
 void KinemAABB::process(float dt){
     if(abs(vel.x) < 0.001f)vel.x = 0.f;
     if(abs(vel.y) < 0.001f)vel.y = 0.f;
+    if(abs(vel.x) > 1000.f)vel.x = 1000.f;
+    if(abs(vel.y) > 1000.f)vel.y = 1000.f;
     pos += vel * dt;
 }
 
@@ -193,4 +199,38 @@ StaticSprite::StaticSprite(vec2 pos, tex2d *source): Base(pos), source(source){}
 
 void StaticSprite::draw(vec2 &cam_pos){
     DrawTextureV(*source, pos-cam_pos, WHITE);
+}
+
+Door::Door(vec2 pos, vec2 size, bool wants_food, tex2d *icon): AABB(pos, size),
+wants_food(wants_food),
+icon(icon)
+{
+    z = 20;
+}
+
+void Door::draw(vec2 &cam_pos){
+    if(icon && wants_food){
+        DrawTextureV(*icon, pos - cam_pos - (vec2){32.f,32.f*(1.f+sinf(GetTime()))}, WHITE);
+    }
+}
+
+Dirizhabl::Dirizhabl(float height, bool spawn_from_left, tex2d *source):
+KinemAABB(
+    (vec2){spawn_from_left ? -250.f : CHUNK_SIZE.x + 250.f,height},
+    (vec2){400.f, 127.f},
+    CollisionType_PLATFORM
+    ),
+    source(source){
+        z = 5;
+        vel.x = spawn_from_left ? 2.f * METER : -2.f * METER;
+}
+    
+void Dirizhabl::process(float dt){
+    KinemAABB::process(dt);
+    // std::cout << pos.x << '\n';
+}
+void Dirizhabl::draw(vec2 &cam_pos){
+    if(source){
+        DrawTextureV(*source, pos - cam_pos, WHITE);
+    }
 }
