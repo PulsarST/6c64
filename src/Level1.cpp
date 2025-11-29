@@ -88,8 +88,6 @@ void Level1::update() {
 void Level1::draw() {
     DrawRectangle(leftLaneX,  hitLineY, 50, 50, WHITE);
     DrawRectangle(rightLaneX, hitLineY, 50, 50, WHITE);
-
-    std::cout << notes[0].position.y << std::endl;
     // UPDATE + DRAW NOTES
     for (auto &n : notes) {
         n.Update(songTime, speed, hitLineY);

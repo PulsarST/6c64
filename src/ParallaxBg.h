@@ -1,11 +1,13 @@
-#include <types.h>
+#include "types.h"
 
 #define PARALLAX_LAYERS_COUNT 3
 struct ParallaxBG{
     vec2    coeffs[PARALLAX_LAYERS_COUNT];
     tex2d  *textures[PARALLAX_LAYERS_COUNT];
 
-    ParallaxBGSystem(
+    ParallaxBG(){}
+
+    ParallaxBG(
         vec2          coeffs[PARALLAX_LAYERS_COUNT],
         tex2d        *textures[PARALLAX_LAYERS_COUNT]
     )
@@ -21,8 +23,8 @@ struct ParallaxBG{
             vec2 resulting_pos = cam_pos * coeffs[i];
             DrawTexturePro(
                 *textures[i],
-                {resulting_pos.x,resulting_pos.y,960,720},
-                {0,0,960,720},
+                {resulting_pos.x,resulting_pos.y,(float)GetScreenWidth(),(float)GetScreenHeight()},
+                {0,0,(float)GetScreenWidth(),(float)GetScreenHeight()},
                 {0,0},
                 0,
                 WHITE

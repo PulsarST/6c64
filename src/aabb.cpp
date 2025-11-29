@@ -50,7 +50,9 @@ void CollAABB::colideWith(
     // DrawCircleV(center, 5.f, RED);
     // DrawCircleV(other_center, 5.f, GREEN);
     if(abs_x > abs_y){
+        bool top_wall;
         if(center.y > other_center.y){
+            top_wall = 1;
             float final_resolution = lerp(other->pos.y + other->size.y,pos.y,mass / (mass + other->mass));
             pos.y = final_resolution;
             other->pos.y = final_resolution - other->size.y;
@@ -58,6 +60,7 @@ void CollAABB::colideWith(
             other->touchedFloor();
         }
         else{
+            top_wall = 0;
             float final_resolution = lerp(other->pos.y - size.y,pos.y,mass / (mass + other->mass));
             pos.y = final_resolution;
             other->pos.y = final_resolution + size.y;
@@ -71,20 +74,23 @@ void CollAABB::colideWith(
             other->pos.x += this_vel->x * (mass / (mass + other->mass)) * dt;
         if(other_vel != nullptr)
             pos.x += other_vel->x * (other->mass / (mass + other->mass)) * dt;
-        if(this_vel != nullptr)
+        if(this_vel != nullptr && __signbitf(this_vel->y) == top_wall && dt != 0)
             this_vel->y = lerp(this_vel->y, boyancy_k*real_vel.y, other->mass / (mass + other->mass));
-        if(other_vel != nullptr)
+        if(other_vel != nullptr && __signbitf(this_vel->y) != top_wall && dt != 0)
             other_vel->y = lerp(other_vel->y, other->boyancy_k*other_real_vel.y/dt, mass / (mass + other->mass));
     }
     else if(abs_x < abs_y){
         touchedWall();
         other->touchedWall();
+        bool left_wall;
         if(center.x > other_center.x){
+            left_wall = 1;
             float final_resolution = lerp(other->pos.x + other->size.x,pos.x,mass / (mass + other->mass));
             pos.x = final_resolution;
             other->pos.x = final_resolution - other->size.x;
         }
         else{
+            left_wall = 0;
             float final_resolution = lerp(other->pos.x - size.x,pos.x,mass / (mass + other->mass));
             pos.x = final_resolution;
             other->pos.x = final_resolution + size.x;
@@ -96,9 +102,9 @@ void CollAABB::colideWith(
             other->pos.y += this_vel->y * (mass / (mass + other->mass)) * dt;
         if(other_vel != nullptr)
             pos.y += other_vel->y * (other->mass / (mass + other->mass)) * dt;
-        if(this_vel != nullptr)
+        if(this_vel != nullptr && __signbitf(this_vel->x) == left_wall && dt != 0)
             this_vel->x = lerp(this_vel->x, boyancy_k*real_vel.x, other->mass / (mass + other->mass));
-        if(other_vel != nullptr)
+        if(other_vel != nullptr && __signbitf(other_vel->x) != left_wall && dt != 0)
             other_vel->x = lerp(other_vel->x, other->boyancy_k*other_real_vel.x/dt, mass / (mass + other->mass));
     }
 
@@ -106,7 +112,8 @@ void CollAABB::colideWith(
 }
 
 KinemAABB::KinemAABB(vec2 pos, vec2 size, float mass, float boyancy_k):
-CollAABB(pos, size, mass, boyancy_k)
+CollAABB(pos, size, mass, boyancy_k),
+vel((vec2){0.f, 0.f})
 {}
 
 vec2 *KinemAABB::getVelocity(){

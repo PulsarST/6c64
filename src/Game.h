@@ -29,7 +29,7 @@ public:
 private:
     std::vector<std::unique_ptr<ILevel>> levels;
     Camera2D camera{};
-    Level currentLevel = LEVEL1;
+    Level currentLevel = LEVEL2;
     double deltaTime;
 };
 

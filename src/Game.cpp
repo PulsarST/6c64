@@ -41,8 +41,8 @@ void Game::run() {
         BeginDrawing();
             ClearBackground(SKYBLUE);
 
-            DrawFPS(20, 20);
             levels[currentLevel]->draw();
+            DrawFPS(20, 20);
         EndDrawing();
     }
 
