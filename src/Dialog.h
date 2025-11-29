@@ -14,9 +14,11 @@ using std::string;
 
 class Dialog {
 public:
-    explicit Dialog(vec2 pos);
+    explicit Dialog(const std::string& filename, vec2  pos);
 
     void draw();
+
+    void add_line(const string &line);
 
     [[nodiscard]] vec2 get_pos() const {
         return pos;
@@ -34,8 +36,11 @@ public:
         this->size = size;
     }
 
+    ~Dialog();
+
 private:
     vector<string> lines;
+    Texture2D person;
     vec2 pos;
     vec2 size;
 };

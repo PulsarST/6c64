@@ -4,6 +4,8 @@
 
 #ifndef PUNKVERSEPROJECT_LEVEL3_H
 #define PUNKVERSEPROJECT_LEVEL3_H
+#include "Dialog.h"
+#include "DialogManager.h"
 #include "ILevel.h"
 
 
@@ -16,6 +18,10 @@ public:
     void update() override;
 
     ~Level3() override;
+
+private:
+    DialogManager dialogManager;
+
 };
 
 
