@@ -142,7 +142,7 @@ void Level2::draw(){
     //     // DrawCircleV(i.pos-cam_pos, 10, BLUE);
     //     DrawTextureV(box,i.pos-cam_pos,WHITE);
     // }   
-    w.draw(box);
+    w.draw();
 }
 
 void Level2::update() {

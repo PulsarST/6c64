@@ -18,10 +18,7 @@ struct Base{
     Base(vec2 pos): pos(pos){}
 
      virtual void process(float dt){};
-     virtual void draw(vec2 &cam_pos, tex2d *t = nullptr){
-        if(!t)return;
-        DrawTextureV(*t, pos - cam_pos, WHITE);
-     };
+     virtual void draw(vec2 &cam_pos){};
 };
 
 struct Chunk{
@@ -113,9 +110,9 @@ struct World{
             i->process(dt);
         }
     }
-    void draw(tex2d &t){
+    void draw(){
         for(auto &i : active){
-            i->draw(cam_pos, &t);
+            i->draw(cam_pos);
         }
     }
 

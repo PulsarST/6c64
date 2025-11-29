@@ -68,5 +68,5 @@ struct StaticSprite: Base{
 
     StaticSprite(vec2 pos, tex2d *source);
 
-    virtual void draw(vec2 &cam_pos, tex2d *t = nullptr) override;
+    virtual void draw(vec2 &cam_pos) override;
 };

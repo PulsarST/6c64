@@ -146,6 +146,6 @@ void KinemAABB::touchedCeiling(){hit_ceiling = 1;}
 
 StaticSprite::StaticSprite(vec2 pos, tex2d *source): Base(pos), source(source){}
 
-void StaticSprite::draw(vec2 &cam_pos, tex2d *t){
+void StaticSprite::draw(vec2 &cam_pos){
     DrawTextureV(*source, pos-cam_pos, WHITE);
 }
