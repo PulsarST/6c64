@@ -33,6 +33,30 @@ namespace ui {
 
         ~Button();
 
+        [[nodiscard]] Texture2D texture1() const {
+            return texture;
+        }
+
+        [[nodiscard]] vec2 pos1() const {
+            return pos;
+        }
+
+        [[nodiscard]] std::function<void()> on_click1() const {
+            return on_click;
+        }
+
+        [[nodiscard]] vec2 get_size() const {
+            return vec2 {.x = static_cast<float>(texture.width), .y = static_cast<float>(texture.height)};
+        }
+
+        void set_texture(const Texture2D& texture);
+
+        void set_pos(vec2 pos);
+
+        void set_pos(float x, float y);
+
+        void set_on_click(const std::function<void()> &on_click);
+
     private:
         Texture2D texture;
         vec2 pos;

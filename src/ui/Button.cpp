@@ -56,4 +56,21 @@ namespace ui {
     Button::~Button() {
         UnloadTexture(texture);
     }
+
+    void Button::set_texture(const Texture2D& texture) {
+        this->texture = texture;
+    }
+
+    void Button::set_pos(vec2 pos) {
+        this->pos = pos;
+    }
+
+    void Button::set_pos(const float x, const float y) {
+        pos.x = x;
+        pos.y = y;
+    }
+
+    void Button::set_on_click(const std::function<void()> &on_click) {
+        this->on_click = on_click;
+    }
 } // ui

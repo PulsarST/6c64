@@ -8,5 +8,8 @@
 #define WIN_WIDTH 1280
 #define WIN_HEIGHT 720
 #define WIN_TITLE "GAME"
+#include "Game.h"
+
+extern inline Level currentLevel = MENU;
 
 #endif //PUNKVERSEPROJECT_GLOBALS_H

@@ -24,13 +24,15 @@ public:
 
     void run();
 
+    void clean_up();
+
     ~Game();
 
 private:
     std::vector<std::unique_ptr<ILevel>> levels;
     Camera2D camera{};
-    Level currentLevel = MENU;
     double deltaTime;
+    bool running = true;
 };
 
 

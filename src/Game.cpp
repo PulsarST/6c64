@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "Globals.h"
 #include "Level1.h"
 #include "Level2.h"
 #include "Level3.h"
@@ -48,11 +49,17 @@ void Game::run() {
         EndDrawing();
     }
 
+    running = false;
+}
+
+void Game::clean_up() {
+    if (!running) {
+        CloseAudioDevice();
+        CloseWindow();
+    }
 }
 
 Game::~Game() {
-    CloseAudioDevice();
-    CloseWindow();
 }
 
 

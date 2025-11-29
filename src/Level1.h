@@ -24,10 +24,11 @@ private:
     float note_delay = 60.f / bpm / splits;
 
     float spawnY = -400.f;
+    float hitLineY = 500;
     float timeToFall = 2.0f; // seconds for note to reach hit line
     float speed = (hitLineY - spawnY) / timeToFall;
 
-    float hitLineY = 500;      // where arrows are
+         // where arrows are
     // float speed = 300.0f;      // falling speed
 
     float hitWindow = 0.15f;   // seconds
