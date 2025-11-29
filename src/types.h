@@ -90,6 +90,7 @@ inline static float dist(vec2 a){
     return sqrtf(a.x*a.x + (a.y*a.y));
 }
 inline static vec2 norm(vec2 a){
+    if(a.x == 0.f && a.y == 0.f)return {0.f, 0.f};
     return a / dist(a);
 }
 

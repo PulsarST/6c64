@@ -32,15 +32,15 @@ class Level2 final : public ILevel{
 public:
     Level2();
 
-    static void house0(World *w, Chunk *c, Level2 *l);
+    static void house0(vec2 pos, World *w, Chunk *c, Level2 *l);
 
-    static void house1(World *w, Chunk *c, Level2 *l);
+    static void house1(vec2 pos, World *w, Chunk *c, Level2 *l);
 
-    static void house2(World *w, Chunk *c, Level2 *l);
+    static void house2(vec2 pos, World *w, Chunk *c, Level2 *l);
 
-    static void house3(World *w, Chunk *c, Level2 *l);
+    static void house3(vec2 pos, World *w, Chunk *c, Level2 *l);
 
-    static void add_house(World *w, Chunk *c, Level2 *l);
+    static void add_house(vec2 pos, World *w, Chunk *c, Level2 *l);
     static void generate_page(World *w, Chunk *c, Level2 *l);
 
     void onDelivering(Bullet *b);
@@ -58,8 +58,10 @@ private:
     ParallaxBG bg;
     World   w;
 
+    u32 generate_zakazchik;
     u32 score;
     u32 zakasi;
+    u32 delivered;
 
     Base *player;
     KinemAABB *player_cast;

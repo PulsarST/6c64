@@ -5,151 +5,158 @@
 #include "Level2.h"
 #include <iostream>
 
-void Level2::house0(World *w, Chunk *c, Level2 *l){
-    vec2 rand_pos = {rand()%((int)CHUNK_SIZE.x- 500), (rand()%((int)CHUNK_SIZE.y+500))-500};
-    Base* house_sprite = new StaticSprite(rand_pos, &l->house_0);
+void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
+    Base* house_sprite = new StaticSprite(pos, &l->house_0);
     w->add(house_sprite, c);
     w->add(new CollAABB(
-        (vec2){73,292}+rand_pos,
+        (vec2){73,292}+pos,
         (vec2){700,32}
         ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
-        (vec2){533,263}+rand_pos,
+        (vec2){533,263}+pos,
         (vec2){199,30}
     ), c);
     w->add(new CollAABB(
-        (vec2){550,244}+rand_pos,
+        (vec2){550,244}+pos,
         (vec2){182,19}
     ), c);
     w->add(new CollAABB(
-        (vec2){570,216}+rand_pos,
+        (vec2){570,216}+pos,
         (vec2){162,28}
     ), c);
     w->add(new CollAABB(
-        (vec2){589,191}+rand_pos,
+        (vec2){589,191}+pos,
         (vec2){143,25}
     ), c);
     w->add(new CollAABB(
-        (vec2){601,160}+rand_pos,
+        (vec2){601,160}+pos,
         (vec2){131,31}
     ), c);
     w->add(new CollAABB(
-        (vec2){732,160}+rand_pos,
+        (vec2){732,160}+pos,
         (vec2){153,31}
         ,CollisionType_PLATFORM
     ), c);
-    if(!(rand()%6)){
+    if(l->generate_zakazchik && !(rand()%4)){
         l->doors.push_back(new Door(
-            (vec2){354,227}+rand_pos,
+            (vec2){354,227}+pos,
             (vec2){7,64},
             &l->want_food
         ));
         w->add(dynamic_cast<Base*>(l->doors.back()), c);
+        l->generate_zakazchik--;
     }
 }
 
-void Level2::house1(World *w, Chunk *c, Level2 *l){
-    vec2 rand_pos = {rand()%((int)CHUNK_SIZE.x- 500), rand()%(int)CHUNK_SIZE.y-500};
-    Base* house_sprite = new StaticSprite(rand_pos, &l->house_1);
+void Level2::house1(vec2 pos, World *w, Chunk *c, Level2 *l){
+    Base* house_sprite = new StaticSprite(pos, &l->house_1);
     w->add(house_sprite, c);
     w->add(new CollAABB(
-        (vec2){157,420}+rand_pos,
+        (vec2){157,420}+pos,
         (vec2){609,34}
         ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
-        (vec2){40,611}+rand_pos,
+        (vec2){40,611}+pos,
         (vec2){415,39}
         ,CollisionType_PLATFORM
     ), c);
-    if(!(rand()%6)){
+    if(l->generate_zakazchik && !(rand()%4)){
         l->doors.push_back(new Door(
-            (vec2){470,354}+rand_pos,
+            (vec2){470,354}+pos,
             (vec2){22,65},
             &l->want_food
         ));
         w->add(dynamic_cast<Base*>(l->doors.back()), c);
+        l->generate_zakazchik--;
     }
 }
 
-void Level2::house2(World *w, Chunk *c, Level2 *l){
-    vec2 rand_pos = {rand()%((int)CHUNK_SIZE.x- 500), rand()%(int)CHUNK_SIZE.y-500};
-    Base* house_sprite = new StaticSprite(rand_pos, &l->house_2);
+void Level2::house2(vec2 pos, World *w, Chunk *c, Level2 *l){
+    Base* house_sprite = new StaticSprite(pos, &l->house_2);
     w->add(house_sprite, c);
     w->add(new CollAABB(
-        (vec2){193,460}+rand_pos,
+        (vec2){193,460}+pos,
         (vec2){508,26}
         ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
-        (vec2){6,316}+rand_pos,
+        (vec2){6,316}+pos,
         (vec2){263,15}
         ,CollisionType_PLATFORM
     ), c);
-    if(!(rand()%6)){
-    l->doors.push_back(new Door(
-        (vec2){390,395}+rand_pos,
-        (vec2){17,62},
-        &l->want_food
-    ));
-    w->add(dynamic_cast<Base*>(l->doors.back()), c);
-}
+    if(l->generate_zakazchik && !(rand()%4)){
+        l->doors.push_back(new Door(
+            (vec2){390,395}+pos,
+            (vec2){17,62},
+            &l->want_food
+        ));
+        w->add(dynamic_cast<Base*>(l->doors.back()), c);
+        l->generate_zakazchik--;
+    }
 }
 
-void Level2::house3(World *w, Chunk *c, Level2 *l){
-    vec2 rand_pos = {rand()%((int)CHUNK_SIZE.x- 500), rand()%(int)CHUNK_SIZE.y-500};
-    Base* house_sprite = new StaticSprite(rand_pos, &l->house_3);
+void Level2::house3(vec2 pos, World *w, Chunk *c, Level2 *l){
+    Base* house_sprite = new StaticSprite(pos, &l->house_3);
     w->add(house_sprite, c);
     w->add(new CollAABB(
-        (vec2){237,308}+rand_pos,
+        (vec2){237,308}+pos,
         (vec2){517,22}
         ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
-        (vec2){661,200}+rand_pos,
+        (vec2){661,200}+pos,
         (vec2){297,20}
         ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
-        (vec2){25,210}+rand_pos,
+        (vec2){25,210}+pos,
         (vec2){199,13}
         ,CollisionType_PLATFORM
     ), c);
-    l->doors.push_back(
-        new Door(
-        (vec2){481,208}+rand_pos,
-        (vec2){40,101},
-        &l->want_food
-        )
-    );
-    w->add(dynamic_cast<Base*>(l->doors.back()), c);
+    if(l->generate_zakazchik && !(rand()%4)){
+        l->doors.push_back(
+            new Door(
+            (vec2){481,208}+pos,
+            (vec2){40,101},
+            &l->want_food
+            )
+        );
+        w->add(dynamic_cast<Base*>(l->doors.back()), c);
+        l->generate_zakazchik--;
+    }
 }
 
-void Level2::add_house(World *w, Chunk *c, Level2 *l){
+void Level2::add_house(vec2 pos, World *w, Chunk *c, Level2 *l){
     switch(rand()%4){
         case 0:
-            house0(w,c,l);
+            house0(pos,w,c,l);
             break;
         case 1:
-            house1(w,c,l);
+            house1(pos,w,c,l);
             break;
         case 2:
-            house2(w,c,l);
+            house2(pos,w,c,l);
             break;
         case 3:
-            house3(w,c,l);
+            house3(pos,w,c,l);
     }
 }
 
 void Level2::generate_page(World *w, Chunk *c, Level2 *l){
-    for(u8 i = 0; i < rand()%3+3; i++){
-        add_house(w, c, l);
+    float height = 0.f;
+    float x = rand()%((int)CHUNK_SIZE.x- 500);
+    for(u8 i = 0; i < rand()%2+3; i++){
+        add_house({x, height},w, c, l);
+        height -= rand()%500 + 250;
+        float x = rand()%((int)CHUNK_SIZE.x- 500);
     }
 }
 
 void Level2::onDelivering(Bullet *b){
     score += calcScore(b);
+    delivered++;
 }
 u32 Level2::calcScore(Bullet *b){
     float d = dist(player_cast->pos - b->pos);
@@ -201,6 +208,8 @@ Level2::Level2(): ILevel() {
 
     score = 0;
     zakasi = 15;
+    generate_zakazchik = zakasi;
+    delivered = 0;
 
     vec2 parallax_coeffs[PARALLAX_LAYERS_COUNT] = {
         {0.1f, 0.1f},
@@ -227,6 +236,8 @@ Level2::Level2(): ILevel() {
         (vec2){32.f, 103.f},
         CollisionType_SOLID,
         1.f);
+
+    add_house((vec2){1000.f, -300.f}, &w, w.current, this);
 
     player_cast = dynamic_cast<KinemAABB*>(player);
     
@@ -256,8 +267,11 @@ void Level2::draw(){
         player_spr_left.draw(w.cam_pos);
     else
         player_spr_right.draw(w.cam_pos);
+    for(auto &i : doors){
+        DrawCircleV(player_cast->size*0.5f + player_cast->pos - w.cam_pos + (64.f * norm(player_cast->size*-0.5f+i->pos-player_cast->pos)), 5, WHITE);
+    }
     DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 20, WHITE);
-    DrawText(("COUNT "+std::to_string(zakasi)).c_str(), 20, 60, 20, WHITE);
+    DrawText(("ORDERS "+std::to_string(zakasi)+" ("+std::to_string(delivered)+" DELIVERED)").c_str(), 20, 60, 20, WHITE);
 }
 
 void Level2::update() {
