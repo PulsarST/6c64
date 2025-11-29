@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Bullet.h
         src/aabb.cpp
         src/aabb.h
+        src/world.h
 )
 
 include(FetchContent)

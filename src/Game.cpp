@@ -11,7 +11,7 @@
 #include "Level3.h"
 
 Game::Game(): levels(5) {
-    InitWindow(800, 800, "Hello World");
+    InitWindow(1280, 720, "Hello World");
     InitAudioDevice();
 
     SetTargetFPS(60);

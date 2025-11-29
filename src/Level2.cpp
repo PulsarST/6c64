@@ -45,18 +45,19 @@ Level2::Level2(): ILevel() {
     std::cout << balls.back().vel.x << ' ' << balls.back().vel.y << '\n';
     std::cout << "dirizhables inited\n";
 
-    bg = ParallaxBG(
-        (vec2[]){
-            (vec2){0.f, 0.f},
-            (vec2){0.1f, 0.f},
-            (vec2){0.4f, 0.4f}
-        },
-        (tex2d*[]){
-            &layer_1,
-            &layer_2,
-            &layer_3,
-        }
-    );
+    vec2 parallax_coeffs[PARALLAX_LAYERS_COUNT] = {
+        {0.f, 0.f},
+        {0.1f, 0.f},
+        {0.4f, 0.4f}
+    };
+
+    tex2d* parallax_textures[PARALLAX_LAYERS_COUNT] = {
+        &layer_1,
+        &layer_2,
+        &layer_3
+    };
+
+    bg = ParallaxBG(parallax_coeffs, parallax_textures);
     std::cout << "parallaxbg inited\n";
 
     infinite_mass = 0;
