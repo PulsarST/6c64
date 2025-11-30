@@ -77,12 +77,71 @@ Level3::Level3() : ILevel() {
 
     // --------------------------------
     granpa = LoadTexture("assets/grapna1.png");
-    granpaEnd.addDialog(&granpa, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addDialog(&hh, vec2 {50,6.f * GetScreenHeight() / 8});
+
     granpaEnd.addLines(0, {
-        ""
+        "Hi, Madina! Do you want to go to the prom with me???!"
     });
 
 
+    granpaEnd.addDialog(&girl, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(1, {
+        "Actually, I’ve been hoping you would invite me to the prom since kindergarten.",
+        "I really would love to go with you. However, you didn’t prepare well enough. That’s disappointing.",
+        "Unfortunately, I can’t accept your invitation, and I will go to the prom alone."
+    });
+
+    granpaEnd.addDialog(&girl, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(2, {
+        "When Madina leaves, the main character stands still like a statue for a while.",
+        "At that moment, her grandmother comes out and sees him standing there with flowers and a gift."
+    });
+
+    granpaEnd.addDialog(&granpa, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(3, {
+        "Oh, what lovely flowers! Are these for me? Thank you!!!"
+    });
+
+    granpaEnd.addDialog(&granpa, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(4, {
+        "What? A note? What does it say? “Will you go to the dance with me?”"
+    });
+
+    granpaEnd.addDialog(&granpa, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(5, {
+        "…"
+    });
+
+    granpaEnd.addDialog(&granpa, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(6, {
+        "I haven't been dancing in so long.…"
+    });
+
+    granpaEnd.addDialog(&granpa, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(7, {
+        " How noble of you to invite me to the dance! Did you want me to remember my youth?",
+        "A very kind gesture. I’ll be back in five minutes — I’ll run and put on my fancy dress. Wait for me!"
+    });
+
+    granpaEnd.addDialog(&hh, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(8, {
+        "…"
+    });
+
+    granpaEnd.addDialog(&hh, vec2 {50,6.f * GetScreenHeight() / 8});
+
+    granpaEnd.addLines(9, {
+        "Well… At least I’ll do a good thing."
+    });
 
     // --------------------------------
 
@@ -109,7 +168,7 @@ void Level3::draw() {
         fatherEnd.draw();
     } else if (buket && !car_end) {
         granpaEnd.draw();
-    } else {
+    } else if (buket && car_end) {
         girlEnd.draw();
     }
 }
@@ -119,7 +178,7 @@ void Level3::update() {
         fatherEnd.update();
     } else if (buket && !car_end) {
         granpaEnd.update();
-    } else {
+    } else if (buket && car_end) {
         girlEnd.update();
     }
 }

@@ -6,6 +6,7 @@
 #define PUNKVERSEPROJECT_MENU_H
 #include "ILevel.h"
 #include "AnimationSprite.h"
+#include "DialogManager.h"
 #include "ui/Button.h"
 
 
@@ -20,10 +21,15 @@ public:
     ~Menu() override;
 
 private:
+    DialogManager intro;
+    bool play_di = false;
+
     ui::Button play_button;
     ui::Button quit_button;
     Texture2D background{};
     Texture2D chrs{};
+
+    Texture2D blank;
 };
 
 
