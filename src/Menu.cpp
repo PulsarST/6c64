@@ -15,6 +15,7 @@ Menu::Menu() : play_button("assets/button.png", "Play", (vec2){.x = WIN_WIDTH / 
                    (Color){230, 103, 103, 255}, []() {
                    }) {
     background = LoadTexture("assets/background_menu.png");
+    chrs = LoadTexture("assets/chrs_menu.png");
 
     vec2 play_button_size = play_button.get_size();
     play_button.set_pos((GetScreenWidth() - play_button_size.x) / 2,
@@ -36,6 +37,7 @@ Menu::Menu() : play_button("assets/button.png", "Play", (vec2){.x = WIN_WIDTH / 
 
 void Menu::draw() {
     DrawTexture(background, 0, 0, WHITE);
+    DrawTexture(chrs, 0, 0, WHITE);
     play_button.draw();
     quit_button.draw();
 }

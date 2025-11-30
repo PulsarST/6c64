@@ -23,6 +23,7 @@ private:
     ui::Button play_button;
     ui::Button quit_button;
     Texture2D background{};
+    Texture2D chrs{};
 };
 
 
