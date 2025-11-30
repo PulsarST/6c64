@@ -5,6 +5,8 @@
 #include "Level2.h"
 #include <iostream>
 
+#include "Globals.h"
+
 void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
     w->add(new StaticSprite(pos, &l->house_0), c);
     w->add(new CollAABB(
@@ -256,6 +258,8 @@ void Level2::gameEndDraw(){
     }
     else if(zakasi == 0 && bullets.empty()){
         DrawText(delivered >= 7.5 ? "ORDERS DELIVERED!" : "YOU LOST TOO MUCH", RES.x/2-300.f, RES.y/2, 64, delivered >= 7.5 ? WHITE : RED);
+        car_end = true;
+        currentLevel = LEVEL3;
     }
 }
 

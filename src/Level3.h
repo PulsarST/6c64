@@ -20,7 +20,11 @@ public:
     ~Level3() override;
 
 private:
-    DialogManager dialogManager;
+    DialogManager fatherEnd;
+    DialogManager granpaEnd;
+    DialogManager girlEnd;
+
+    Texture2D father, granpa, girl, hh;
 
 };
 

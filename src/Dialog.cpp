@@ -10,6 +10,7 @@
 Dialog::Dialog(Texture2D *texture, const vec2 pos) {
     this->person = texture;
     this->pos = pos;
+
 }
 
 void Dialog::draw() {
@@ -18,8 +19,11 @@ void Dialog::draw() {
     *std::max_element(lines.begin(), lines.end(),
         [](const string &a, const string &b) { return a.size() < b.size(); });
 
-    float rect_width = MeasureText(longest_string.c_str(), 20) + 20;
-    float rect_height = lines.size() * 22.0f + 20.0f;
+    Vector2 m = MeasureTextEx(dFont, longest_string.c_str(), dFont.baseSize - 2, 2);
+    float rect_width = m.x + 20;
+    float rect_height = lines.size() * (dFont.baseSize) + 20;
+
+
 
     Rectangle rect = {
         .x = pos.x,
