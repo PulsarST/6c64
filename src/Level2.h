@@ -58,7 +58,7 @@ private:
     vec2    cam_pos;
 
     ParallaxBG bg;
-    World   w;
+    World      *w;
 
     u32 generate_zakazchik;
     u32 score;
