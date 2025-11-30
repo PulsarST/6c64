@@ -344,6 +344,10 @@ void Level2::update() {
     if(IsKeyPressed(KEY_D))
         player_anim = 0;
 
+    if(player_cast->pos.y > 1000.f){
+        game_timer *= 0.5f;
+    }
+
     player_spr_left.process(dt*(player_cast->vel.x != 0));
     player_spr_right.process(dt*(player_cast->vel.x != 0));
     player_spr_left.pos = player_cast->pos - (vec2){22.f,0.f};
