@@ -92,13 +92,13 @@ struct World{
 
     void process(float dt){
         if(current == nullptr)return;
-        // std::cout << "nullptr passed\n";
-        // std::cout << "if active empty\n";
+        std::cout << "nullptr passed\n";
+        std::cout << "if active empty\n";
         if(active.empty())
             for(auto &i : current->in_chunk){
                 active.insert(i);
             }
-        // std::cout << "cam target\n";
+        std::cout << "cam target\n";
         if(cam_target)
             cam_pos = lerp(
                 cam_pos, 
@@ -110,12 +110,12 @@ struct World{
         else if(cam_pos.x > CHUNK_SIZE.x - RES.x)
             cam_pos.x = CHUNK_SIZE.x - RES.x;
         if(cam_pos.y < current->pos * CHUNK_SIZE.y){
-            // std::cout << "unload bottom\n";
-            // if(current->bottom)
-            //     for(auto &i : active){
-            //         if(i->chunk == current->bottom)
-            //             active.erase(i);
-            //     }
+            std::cout << "unload bottom\n";
+            if(current->bottom)
+                for(auto &i : active){
+                    if(i->chunk == current->bottom)
+                        active.erase(i);
+                }
             if(!current->top){
                 on_reaching_top(this);
             }
@@ -127,11 +127,11 @@ struct World{
             
         }
         else if(cam_pos.y >= current->pos+1 * CHUNK_SIZE.y){
-            // std::cout << "unload top\n";
-            // for(auto &i : active){
-            //     if(i->chunk == current)
-            //         active.erase(i);
-            // }
+            std::cout << "unload top\n";
+            for(auto &i : active){
+                if(i->chunk == current)
+                    active.erase(i);
+            }
             if(!current->bottom){
                 on_reaching_bottom(this);
             }
@@ -141,7 +141,7 @@ struct World{
                     active.insert(i);
             }
         }
-        // std::cout << "process dt\n";
+        std::cout << "process dt\n";
         for(auto &i : active){
             i->process(dt);
         }

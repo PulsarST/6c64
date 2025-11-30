@@ -215,12 +215,12 @@ void Door::draw(vec2 &cam_pos){
 
 Dirizhabl::Dirizhabl(float height, bool spawn_from_left, tex2d *source):
 KinemAABB(
-    (vec2){spawn_from_left ? -250.f : CHUNK_SIZE.x + 250.f,height},
+    (vec2){spawn_from_left ? -400.f : CHUNK_SIZE.x + 400.f,height},
     (vec2){400.f, 127.f},
     CollisionType_PLATFORM
     ),
     source(source){
-        z = 5;
+        z = 50;
         vel.x = spawn_from_left ? 2.f * METER : -2.f * METER;
 }
     

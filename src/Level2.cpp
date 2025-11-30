@@ -16,29 +16,34 @@ void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
     w->add(new CollAABB(
         (vec2){533,263}+pos,
         (vec2){199,30}
+        ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
         (vec2){550,244}+pos,
         (vec2){182,19}
+        ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
         (vec2){570,216}+pos,
         (vec2){162,28}
+        ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
         (vec2){589,191}+pos,
         (vec2){143,25}
+        ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
         (vec2){601,160}+pos,
         (vec2){131,31}
+        ,CollisionType_PLATFORM
     ), c);
     w->add(new CollAABB(
         (vec2){732,160}+pos,
         (vec2){153,31}
         ,CollisionType_PLATFORM
     ), c);
-    if(l->generate_zakazchik && !(rand()%4)){
+    if(l->generate_zakazchik && !(rand()%3)){
         l->doors.push_back(new Door(
             (vec2){354,227}+pos,
             (vec2){7,64},
@@ -62,7 +67,7 @@ void Level2::house1(vec2 pos, World *w, Chunk *c, Level2 *l){
         (vec2){415,39}
         ,CollisionType_PLATFORM
     ), c);
-    if(l->generate_zakazchik && !(rand()%4)){
+    if(l->generate_zakazchik && !(rand()%3)){
         l->doors.push_back(new Door(
             (vec2){470,354}+pos,
             (vec2){22,65},
@@ -86,7 +91,7 @@ void Level2::house2(vec2 pos, World *w, Chunk *c, Level2 *l){
         (vec2){263,15}
         ,CollisionType_PLATFORM
     ), c);
-    if(l->generate_zakazchik && !(rand()%4)){
+    if(l->generate_zakazchik && !(rand()%3)){
         l->doors.push_back(new Door(
             (vec2){390,395}+pos,
             (vec2){17,62},
@@ -115,7 +120,7 @@ void Level2::house3(vec2 pos, World *w, Chunk *c, Level2 *l){
         (vec2){199,13}
         ,CollisionType_PLATFORM
     ), c);
-    if(l->generate_zakazchik && !(rand()%4)){
+    if(l->generate_zakazchik && !(rand()%3)){
         l->doors.push_back(
             new Door(
             (vec2){481,208}+pos,
@@ -207,7 +212,7 @@ Level2::Level2(): ILevel() {
     mus = LoadMusicStream("assets/delivery.wav");
 
     score = 0;
-    zakasi = 15;
+    zakasi = 10;
     generate_zakazchik = zakasi;
     delivered = 0;
 
@@ -230,6 +235,7 @@ Level2::Level2(): ILevel() {
         generate_page(w, new_chunk, this);
     };
     generate_page(&w,w.current,this);
+    add_house((vec2){1000.f, -300.f}, &w, w.current, this);
 
     player = new KinemAABB(
         (vec2){1500.f, -300.f},
@@ -237,7 +243,6 @@ Level2::Level2(): ILevel() {
         CollisionType_SOLID,
         1.f);
 
-    add_house((vec2){1000.f, -300.f}, &w, w.current, this);
 
     player_cast = dynamic_cast<KinemAABB*>(player);
     
@@ -270,8 +275,14 @@ void Level2::draw(){
     for(auto &i : doors){
         DrawCircleV(player_cast->size*0.5f + player_cast->pos - w.cam_pos + (64.f * norm(player_cast->size*-0.5f+i->pos-player_cast->pos)), 5, WHITE);
     }
-    DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 20, WHITE);
-    DrawText(("ORDERS "+std::to_string(zakasi)+" ("+std::to_string(delivered)+" DELIVERED)").c_str(), 20, 60, 20, WHITE);
+    DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 40, WHITE);
+    DrawText(("ORDERS "+std::to_string(zakasi)+" ("+std::to_string(delivered)+" DELIVERED)").c_str(), 20, 80, 40, WHITE);
+    if(game_timer < 0.f){
+        DrawText("TIME'S UP!", RES.x/2, RES.y/2, 64, RED);
+    }
+    DrawText("TIME", 317, 590, 40, WHITE);
+    DrawRectangle(317,635,634,35,BLACK);
+    DrawRectangle(318,636,632*game_timer/max_game_time,33,WHITE);
 }
 
 void Level2::update() {
@@ -281,7 +292,11 @@ void Level2::update() {
         PlayMusicStream(mus);
     UpdateMusicStream(mus);
 
+    if(game_timer <= 0.f)return;
+
     dirizhabl_timer += dt;
+    game_timer -= dt;
+
     if(dirizhabl_timer >= 4.f){
         bool from_left = rand()%2;
         dirizhabls.push_back(

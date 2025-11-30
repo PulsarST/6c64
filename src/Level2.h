@@ -68,6 +68,9 @@ private:
     bool player_anim = 0.f;
 
     float dirizhabl_timer = 0.f;
+    float max_game_time = 200.f;
+    float game_timer = max_game_time;
+    // float game_timer = 3.f;
 
     std::vector<Bullet*> bullets;
     std::vector<Door*> doors;
