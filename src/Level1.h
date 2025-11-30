@@ -8,6 +8,7 @@
 #include "raylib.h"
 #include "Note.h"
 
+
 class Level1 final : public ILevel {
 public:
     Level1();
@@ -34,6 +35,9 @@ private:
     Color leftLaneColor{};
     Color rightLaneColor{};
 
+    int rhythm_score = 0;
+
+
     // timing
     float bpm = 95.f;
     float splits = 4.f;
@@ -44,7 +48,7 @@ private:
     float timeToFall = 2.0f; // seconds for note to reach hit line
     float speed = (hitLineY - spawnY) / timeToFall;
 
-         // where arrows are
+    // where arrows are
     // float speed = 300.0f;      // falling speed
 
     float hitWindow = 0.15f;   // seconds

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "Level1.h"
+
 Note::Note(const float t, const int l, const Vector2 startPos, const Color c) {
     time = t;
     lane = l;

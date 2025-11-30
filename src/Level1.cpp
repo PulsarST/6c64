@@ -348,13 +348,22 @@ void Level1::update() {
 
         // INPUT HIT
         if (IsKeyPressed(KEY_LEFT)) {
-            for (auto &n : notes)
-                if (n.lane == 0) n.TryHit(songTime, hitWindow, hitLineY);
+            for (auto &n : notes) {
+                if (n.lane == 0) {
+                    if (n.TryHit(songTime, hitWindow, hitLineY))
+                        rhythm_score++;
+
+                }
+            }
         }
 
         if (IsKeyPressed(KEY_RIGHT)) {
-            for (auto &n : notes)
-                if (n.lane == 1) n.TryHit(songTime, hitWindow, hitLineY);
+            for (auto &n : notes) {
+                if (n.lane == 1) {
+                    if (n.TryHit(songTime, hitWindow, hitLineY))
+                        rhythm_score++;
+                }
+            }
         }
 
         if (IsKeyDown(KEY_LEFT)) {
@@ -387,6 +396,7 @@ void Level1::draw() {
 
         DrawTexture(leftArrow, leftLaneX, hitLineY, leftLaneColor);
         DrawTexture(rightArrow, rightLaneX, hitLineY, rightLaneColor);
+        DrawText(("Score: " + std::to_string(rhythm_score)).c_str(), 20, 40, 20, BLACK);
 
         // UPDATE + DRAW NOTES
         for (auto &n : notes) {
