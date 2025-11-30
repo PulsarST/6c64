@@ -43,6 +43,8 @@ void CollAABB::colideWith(
     // if(__resolved__ || other->__resolved__)return;
     if(other->coll_type == CollisionType_PLATFORM && coll_type == other->coll_type)return;
 
+    if(dt == 0.0f)
+        dt = 0.001f;
     vec2 *this_vel = getVelocity(),
          *other_vel = other->getVelocity();
     
@@ -233,3 +235,24 @@ void Dirizhabl::draw(vec2 &cam_pos){
         DrawTextureV(*source, pos - cam_pos, WHITE);
     }
 }
+
+// Drone::Drone(float angle, tex2d *source):
+// KinemAABB(
+//     (vec2){spawn_from_left ? -400.f : CHUNK_SIZE.x + 400.f,height},
+//     (vec2){81.f, 27.f},
+//     CollisionType_PLATFORM
+//     ),
+//     source(source){
+//         z = 50;
+//         vel.x = spawn_from_left ? 2.f * METER : -2.f * METER;
+// }
+    
+// void Drone::process(float dt){
+//     KinemAABB::process(dt);
+//     // std::cout << pos.x << '\n';
+// }
+// void Drone::draw(vec2 &cam_pos){
+//     if(source){
+//         DrawTextureV(*source, pos - cam_pos, WHITE);
+//     }
+// }

@@ -111,15 +111,15 @@ struct World{
             cam_pos.x = CHUNK_SIZE.x - RES.x;
         if(cam_pos.y < current->pos * CHUNK_SIZE.y){
             std::cout << "unload bottom\n";
-            if(current->bottom)
+            if(current->bottom != nullptr)
                 for(auto &i : active){
                     if(i->chunk == current->bottom)
                         active.erase(i);
                 }
-            if(!current->top){
+            if(current->top == nullptr){
                 on_reaching_top(this);
             }
-            if(current->top){
+            if(current->top != nullptr){
                 current = current->top;
                 for(auto &i : current->in_chunk)
                     active.insert(i);
@@ -132,10 +132,10 @@ struct World{
                 if(i->chunk == current)
                     active.erase(i);
             }
-            if(!current->bottom){
+            if(current->bottom == nullptr){
                 on_reaching_bottom(this);
             }
-            if(current->bottom){
+            if(current->bottom != nullptr){
                 current = current->bottom;
                 for(auto &i : current->bottom->in_chunk)
                     active.insert(i);

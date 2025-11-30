@@ -253,7 +253,22 @@ Level2::Level2(): ILevel() {
     w.cam_target = &player->pos;
 }
 
+void Level2::gameEndDraw(){
+    bg.draw(w.cam_pos);
+    if(game_timer < 0.f){
+        DrawText("TIME'S UP!", RES.x/2-100.f, RES.y/2, 64, RED);
+    }
+    else if(zakasi == 0 && bullets.empty()){
+        DrawText(delivered >= 7.5 ? "ORDERS DELIVERED!" : "YOU LOST TOO MUCH", RES.x/2-300.f, RES.y/2, 64, delivered >= 7.5 ? WHITE : RED);
+    }
+}
+
 void Level2::draw(){
+    bool game_end = game_timer <= 0.f || (zakasi == 0 && bullets.empty());
+    if(game_end){
+        gameEndDraw();
+        return;
+    }
     // cam_pos = lerp(
     //     cam_pos, 
     //     balls[0].pos 
@@ -277,24 +292,18 @@ void Level2::draw(){
     }
     DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 40, WHITE);
     DrawText(("ORDERS "+std::to_string(zakasi)+" ("+std::to_string(delivered)+" DELIVERED)").c_str(), 20, 80, 40, WHITE);
-    if(game_timer < 0.f){
-        DrawText("TIME'S UP!", RES.x/2-100.f, RES.y/2, 64, RED);
-    }
-    else if(zakasi == 0 && bullets.empty()){
-        DrawText("ORDERS DELIVERED!", RES.x/2-300.f, RES.y/2, 64, WHITE);
-    }
     DrawText("TIME", 317, 590, 40, WHITE);
     DrawRectangle(317,635,634,35,BLACK);
     DrawRectangle(318,636,632*game_timer/max_game_time,33,WHITE);
 }
 
 void Level2::gameEndCycle(float dt){
-    if(delivered >= 7.5){
-        //win
-    }
-    else{
-        //lose
-    }
+    // if(delivered >= 7.5){
+    //     //win
+    // }
+    // else{
+    //     //lose
+    // }
 }
 
 void Level2::update() {
@@ -368,6 +377,7 @@ void Level2::update() {
             if(IsKeyPressed(KEY_LEFT_SHIFT) && player_cast->isColliding(p)){
                 std::erase_if(bullets, [p]( Bullet* &el){return el == p;});
                 w.remove(dynamic_cast<Base*>(i));
+                zakasi++;
             }
             continue;
         }

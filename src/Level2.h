@@ -46,6 +46,7 @@ public:
     void onDelivering(Bullet *b);
     u32 calcScore(Bullet *b);
 
+    void gameEndDraw();
     void draw() override;
 
     void gameEndCycle(float dt);
