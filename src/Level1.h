@@ -31,6 +31,7 @@ private:
 
     Texture2D leftArrow{};
     Texture2D rightArrow{};
+    Texture2D dance_bg{};
 
     // lane positions (calculated in constructor)
     float leftLaneX;

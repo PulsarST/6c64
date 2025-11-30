@@ -279,6 +279,7 @@ Level1::Level1()
     music.looping = false;
     // Now it's safe to use GetScreenWidth()
 
+    dance_bg = LoadTexture("assets/dance_bg.png");
     leftArrow = LoadTexture("assets/left_arrow.png");
     rightArrow = LoadTexture("assets/right_arrow.png");
 
@@ -313,7 +314,6 @@ Level1::Level1()
         std::cout << spawnTime << '\n';
         notes.emplace_back(spawnTime, lane, pos, c);
     }
-
 
     person_fr1 = LoadTexture("assets\\FR1.png");
 
@@ -421,12 +421,14 @@ void Level1::draw() {
 
     // 1. Intro dialogs
     if (!dialogManager.getIsFinished() && !isEndingDialog) {
+        DrawTexture(dance_bg, 0, 0, WHITE);
         dialogManager.draw();
         return;
     }
 
     // 2. Ending dialogs
     if (isEndingDialog) {
+        DrawTexture(dance_bg, 0, 0, WHITE);
         if (useGoodEnding)
             good_end_dialogue.draw();
         else
@@ -435,6 +437,7 @@ void Level1::draw() {
     }
 
     // 3. Gameplay drawing
+    DrawTexture(dance_bg, 0, 0, WHITE);
     DrawTexture(leftArrow, leftLaneX, hitLineY, leftLaneColor);
     DrawTexture(rightArrow, rightLaneX, hitLineY, rightLaneColor);
 
@@ -450,6 +453,7 @@ void Level1::draw() {
 // Destructor
 Level1::~Level1() {
     UnloadTexture(person_fr1);
+    UnloadTexture(dance_bg);
     UnloadTexture(leftArrow);
     UnloadTexture(rightArrow);
     UnloadMusicStream(music);
