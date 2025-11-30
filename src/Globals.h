@@ -10,7 +10,7 @@
 #define WIN_TITLE "GAME"
 #include "Game.h"
 
-extern inline Level currentLevel = LEVEL3;
+extern inline Level currentLevel = LEVEL1;
 extern inline  bool buket = false;
 extern inline bool car_end = true;
 

@@ -7,6 +7,9 @@
 
 #include "Globals.h"
 
+extern inline bool buket;
+extern inline Level currentLevel;
+
 void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
     w->add(new StaticSprite(pos, &l->house_0), c);
     w->add(new CollAABB(
@@ -258,9 +261,8 @@ void Level2::gameEndDraw(){
         DrawText("TIME'S UP!", RES.x/2-100.f, RES.y/2, 64, RED);
     }
     else if(zakasi == 0 && bullets.empty()){
-        DrawText(delivered >= 7.5 ? "ORDERS DELIVERED!" : "YOU LOST TOO MUCH", RES.x/2-300.f, RES.y/2, 64, delivered >= 7.5 ? WHITE : RED);
+        DrawText(delivered >= 6 ? "ORDERS DELIVERED!" : "YOU LOST TOO MUCH", RES.x/2-300.f, RES.y/2, 64, delivered >= 7.5 ? WHITE : RED);
         car_end = true;
-        currentLevel = LEVEL3;
     }
 }
 
@@ -296,9 +298,15 @@ void Level2::draw(){
     DrawText("TIME", 317, 590, 40, WHITE);
     DrawRectangle(317,635,634,35,BLACK);
     DrawRectangle(318,636,632*game_timer/max_game_time,33,WHITE);
+    DrawRectangle(0,0,RES.x,RES.y, (Color){127,0,0,(unsigned char)(255*std::max(0.f,1.f-(last_death_timer*2.f)))});
 }
 
 void Level2::gameEndCycle(float dt){
+    buket = delivered >= 6;
+    end_timer -= dt;
+    if(end_timer <= 0.f){
+        currentLevel = LEVEL3;
+    }
     // if(delivered >= 7.5){
     //     //win
     // }
@@ -310,6 +318,8 @@ void Level2::gameEndCycle(float dt){
 void Level2::die(){
     game_timer *= 0.5f;
     player->pos = {1500.f, -300.f};
+    w->cam_pos = player->pos - (RES*0.5f);
+    last_death_timer = 0.f;
 }
 
 void Level2::update() {
@@ -328,6 +338,7 @@ void Level2::update() {
 
     dirizhabl_timer += dt;
     game_timer -= dt;
+    last_death_timer += dt;
 
     if(dirizhabl_timer >= 4.f){
         bool from_left = rand()%2;
@@ -352,20 +363,22 @@ void Level2::update() {
         player_cast->pos + 
         (vec2){rand()%400-200,rand()%400-200};
 
-        drones.push_back(
-            new Drone(
-                attack_pos,
-                &drone
-            )
-        );
-        drones.back()->vel = 5.f * METER * norm(player_cast->pos - attack_pos);
-        drones.back()->pos.y -= w->current->pos * CHUNK_SIZE.y;
-        w->add(
-            drones.back(),
-            w->current,
-            1
-        );
-        dirizhabl_timer = 0.f;
+        if(w->current && w->current->pos != 0){
+            drones.push_back(
+                new Drone(
+                    attack_pos,
+                    &drone
+                )
+            );
+            drones.back()->vel = 5.f * METER * norm(player_cast->pos - attack_pos);
+            drones.back()->pos.y -= w->current->pos * CHUNK_SIZE.y;
+            w->add(
+                drones.back(),
+                w->current,
+                1
+            );
+            dirizhabl_timer = 0.f;
+        }
     }
 
     // std::cout << "jumps\n";

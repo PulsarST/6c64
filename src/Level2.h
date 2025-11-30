@@ -75,6 +75,8 @@ private:
     float last_throw_timer = 1.f;
     float max_game_time = 200.f;
     float game_timer = max_game_time;
+    float end_timer = 2.f;
+    float last_death_timer = 6.f;
     // float game_timer = 3.f;
 
     std::vector<Bullet*> bullets;
