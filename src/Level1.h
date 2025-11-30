@@ -20,7 +20,11 @@ public:
 private:
     std::vector<Note> notes;
     std::vector<int> init_data;
+
     DialogManager dialogManager;
+    DialogManager bad_end_dialogue;
+    DialogManager good_end_dialogue;
+
 
     // music
     Music music{};
@@ -37,6 +41,8 @@ private:
 
     int rhythm_score = 0;
 
+    bool isEndingDialog = false;
+    bool useGoodEnding = false;
 
     // timing
     float bpm = 95.f;
