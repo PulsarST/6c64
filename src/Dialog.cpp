@@ -5,6 +5,7 @@
 #include "Dialog.h"
 
 #include "Globals.h"
+#include <algorithm>
 
 Dialog::Dialog(Texture2D *texture, const vec2 pos) {
     this->person = texture;

@@ -29,21 +29,24 @@ Game::Game(): levels(5) {
 
     deltaTime = 0;
 
-    levels[MENU] = std::make_unique<Menu>();
-    levels[LEVEL1] = std::make_unique<Level1>();
-    levels[LEVEL2] = std::make_unique<Level2>();
-    levels[LEVEL3] = std::make_unique<Level3>();
+    levels[MENU] = new Menu();
+    levels[LEVEL1] = new Level1();
+    levels[LEVEL2] = nullptr;
+    levels[LEVEL3] = new Level3();
 
 }
 
 void Game::run() {
     while (!WindowShouldClose()) {
-        deltaTime = GetFrameTime();
-        levels[currentLevel]->update();
-
         if (IsKeyDown(KEY_P)) {
             currentLevel = (Level)((int)currentLevel + 1);
         }
+        if(!levels[LEVEL2] && currentLevel == LEVEL2){
+            levels[LEVEL2] = new Level2();
+        }
+
+        deltaTime = GetFrameTime();
+        levels[currentLevel]->update();
 
         BeginDrawing();
             ClearBackground(SKYBLUE);
@@ -64,6 +67,8 @@ void Game::clean_up() {
 }
 
 Game::~Game() {
+    for(auto i : levels)
+        delete i;
 }
 
 

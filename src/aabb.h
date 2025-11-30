@@ -82,7 +82,7 @@ struct Door: AABB{
     Door(){}
     Door(vec2 pos, vec2 size, tex2d *icon = nullptr);
 
-    void draw(vec2 &cam_pos) override;
+    virtual void draw(vec2 &cam_pos) override;
 };
 
 struct Dirizhabl: KinemAABB{
@@ -91,8 +91,8 @@ struct Dirizhabl: KinemAABB{
     Dirizhabl(){}
     Dirizhabl(float height, bool spawn_from_left, tex2d *source = nullptr);
     
-    void process(float dt) override;
-    void draw(vec2 &cam_pos) override;
+    virtual void process(float dt) override;
+    virtual void draw(vec2 &cam_pos) override;
 };
 
 struct Drone: KinemAABB{

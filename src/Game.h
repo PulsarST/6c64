@@ -29,7 +29,7 @@ public:
     ~Game();
 
 private:
-    std::vector<std::unique_ptr<ILevel>> levels;
+    std::vector<ILevel*> levels;
     Camera2D camera{};
     double deltaTime;
     bool running = true;

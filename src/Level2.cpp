@@ -223,14 +223,15 @@ Level2::Level2(): ILevel() {
     };
 
     bg = ParallaxBG(parallax_coeffs, parallax_textures);
+    w = new World();
 
-    w.on_reaching_top = [this](World *w){
+    w->on_reaching_top = [this](World *w){
         Chunk *new_chunk = new Chunk(w->current->pos-1);
         w->current->top = new_chunk;
         generate_page(w, new_chunk, this);
     };
-    generate_page(&w,w.current,this);
-    add_house((vec2){1000.f, -300.f}, &w, w.current, this);
+    generate_page(w,w->current,this);
+    add_house((vec2){1000.f, -300.f}, w, w->current, this);
 
     player = new KinemAABB(
         (vec2){1500.f, -300.f},
@@ -241,15 +242,15 @@ Level2::Level2(): ILevel() {
 
     player_cast = dynamic_cast<KinemAABB*>(player);
     
-    w.add(
+    w->add(
         player,
-        w.current
+        w->current
     );
-    w.cam_target = &player->pos;
+    w->cam_target = &player->pos;
 }
 
 void Level2::gameEndDraw(){
-    bg.draw(w.cam_pos);
+    bg.draw(w->cam_pos);
     if(game_timer < 0.f){
         DrawText("TIME'S UP!", RES.x/2-100.f, RES.y/2, 64, RED);
     }
@@ -271,19 +272,19 @@ void Level2::draw(){
     //     , 
     //     GetFrameTime()*3.f < 1.f ? GetFrameTime()*3.f : 1.f
     // );
-    bg.draw(w.cam_pos);
+    bg.draw(w->cam_pos);
     // for(auto& i : balls){
     //     // DrawCircleV(i.pos-cam_pos, 10, BLUE);
     //     DrawTextureV(box,i.pos-cam_pos,WHITE);
     // }   
-    w.draw();
+    w->draw();
 
     if(player_anim)
-        player_spr_left.draw(w.cam_pos);
+        player_spr_left.draw(w->cam_pos);
     else
-        player_spr_right.draw(w.cam_pos);
+        player_spr_right.draw(w->cam_pos);
     for(auto &i : doors){
-        DrawCircleV(player_cast->size*0.5f + player_cast->pos - w.cam_pos + (64.f * norm(player_cast->size*-0.5f+i->pos-player_cast->pos)), 5, WHITE);
+        DrawCircleV(player_cast->size*0.5f + player_cast->pos - w->cam_pos + (64.f * norm(player_cast->size*-0.5f+i->pos-player_cast->pos)), 5, WHITE);
     }
     DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 40, WHITE);
     DrawText(("ORDERS "+std::to_string(zakasi)+" ("+std::to_string(delivered)+" DELIVERED)").c_str(), 20, 80, 40, WHITE);
@@ -327,10 +328,10 @@ void Level2::update() {
                 from_left ? &dirizhabl_right : &dirizhabl_left
             )
         );
-        dirizhabls.back()->pos.y -= w.current->pos * CHUNK_SIZE.y;
-        w.add(
+        dirizhabls.back()->pos.y -= w->current->pos * CHUNK_SIZE.y;
+        w->add(
             dirizhabls.back(),
-            w.current,
+            w->current,
             1
         );
         dirizhabl_timer = 0.f;
@@ -357,25 +358,25 @@ void Level2::update() {
         zakasi--;
         // std::cout << player_cast->pos.x << ' ' << player_cast->pos.y << '\n';
         bullets.push_back(new Bullet(player_cast->pos + (vec2){16.f,16.f}, &tovar_icon_0,
-            w.cam_pos + GetMousePosition()));
+            w->cam_pos + GetMousePosition()));
 
         bullets.back()->vel += player_cast->vel*0.4f;
             
-        w.add(bullets.back(), w.current, 1);
-        bullets.back()->pos.y -= (CHUNK_SIZE.y*w.current->pos);
+        w->add(bullets.back(), w->current, 1);
+        bullets.back()->pos.y -= (CHUNK_SIZE.y*w->current->pos);
 
         // std::cout << bullets.back()->pos.x << ' ' << bullets.back()->pos.y << '\n';
     }
 
     // std::cout << "process world\n";
-    w.process(dt);
+    w->process(dt);
 
     // std::cout << "player collides with active\n";
-    for(auto i : w.active){
+    for(auto i : w->active){
         if(auto p = dynamic_cast<Bullet*>(i)){
             if(IsKeyPressed(KEY_LEFT_SHIFT) && player_cast->isColliding(p)){
                 std::erase_if(bullets, [p]( Bullet* &el){return el == p;});
-                w.remove(dynamic_cast<Base*>(i));
+                w->remove(dynamic_cast<Base*>(i));
                 zakasi++;
             }
             continue;
@@ -386,25 +387,25 @@ void Level2::update() {
     // std::cout << "bullets collide with active\n";
     for(auto i : dirizhabls){
         if(i->pos.x > CHUNK_SIZE.x+600 || i->pos.x < -600){
-            w.remove(dynamic_cast<Base*>(i));
+            w->remove(dynamic_cast<Base*>(i));
             std::erase_if(dirizhabls, [i]( Dirizhabl* &el){return el == i;});
         }
     }
     for(auto i : bullets){
         if(dist(i->pos - player_cast->pos) > 15.f * METER){
-            w.remove(dynamic_cast<Base*>(i));
+            w->remove(dynamic_cast<Base*>(i));
             std::erase_if(bullets, [i]( Bullet* &el){return el == i;});
         }
-        for(auto j : w.active){
+        for(auto j : w->active){
             if(j == player)continue;
             i->colideWith(dynamic_cast<CollAABB*>(j), dt);
         }
         for(auto j : doors)
             if(i->isColliding(dynamic_cast<AABB*>(j))){
                 onDelivering(i);
-                w.remove(dynamic_cast<Base*>(i));
+                w->remove(dynamic_cast<Base*>(i));
                 std::erase_if(bullets, [i]( Bullet* &el){return el == i;});
-                w.remove(dynamic_cast<Base*>(j));
+                w->remove(dynamic_cast<Base*>(j));
                 std::erase_if(doors, [j]( Door* &el){return el == j;});
             }
     }
@@ -449,5 +450,6 @@ Level2::~Level2() {
 
     UnloadMusicStream(mus);
 
+    delete w;
 }
 

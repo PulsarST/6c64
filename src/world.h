@@ -2,7 +2,7 @@
 #include "types.h"
 #define CHUNK_SIZE (vec2){3000.f,800.f}
 #define RES (vec2){(float)GetScreenWidth(), (float)GetScreenHeight()}
-#include <unordered_set>
+#include <vector>
 #include <iostream>
 
 #include <queue>
@@ -32,27 +32,33 @@ struct ZComp{
 
 struct Chunk{
         const i32 pos;
+
         Chunk *top = nullptr;
         Chunk *bottom = nullptr;
-        std::unordered_set<Base*> in_chunk;
 
+        std::vector<Base*> in_chunk;
+
+        Chunk(): pos(0){}
         Chunk(i32 pos): pos(pos){}
         ~Chunk(){
-            for(auto &i : in_chunk)
-                delete i;
-            delete top;
-            delete bottom;
+            for(auto i : in_chunk)
+                if(i)
+                    delete i;
+            if(top)
+                delete top;
+            if(bottom)
+                delete bottom;
         }
 };
 
 struct World{
-    Chunk* root = nullptr;
-    Chunk* current = root;
+    Chunk root;
+    Chunk *current;
 
     vec2 *cam_target = nullptr;
     vec2 cam_pos;
 
-    std::unordered_set<Base*> active;
+    std::vector<Base*> active;
 
     std::function<void(World*)> on_reaching_top;
     std::function<void(World*)> on_reaching_bottom;
@@ -63,8 +69,7 @@ struct World{
         on_reaching_top = [](World* w){};
         on_reaching_bottom = [](World* w){};
         cam_pos = {0.f,0.f};
-        root = new Chunk(0);
-        current = root;
+        current = &root;
     }
 
     void add(Base* item, Chunk *c, bool to_active = 0){
@@ -74,10 +79,10 @@ struct World{
         // std::cout << "passed not nullptr\n";
         // std::cout << item->pos.x << ' ' << item->pos.y << '\n';
         // std::cout << item << '\n';
-        c->in_chunk.insert(item);
+        c->in_chunk.push_back(item);
         // std::cout << "in chunk inserted successfully\n";
         if(to_active)
-            active.insert(item);
+            active.push_back(item);
         // std::cout << "active inserted successfully\n";
         item->pos.y += c->pos * CHUNK_SIZE.y;
         item->chunk = c;
@@ -85,25 +90,25 @@ struct World{
 
     void remove(Base *item){
         if(!item)return;
-        active.erase(item);
-        item->chunk->in_chunk.erase(item);
+        std::erase(active, item);
+        std::erase(item->chunk->in_chunk, item);
         delete item;
         std::cout << "REMOVED PERMANENTLY\n";
     }
 
     void process(float dt){
         if(current == nullptr)return;
-        std::cout << "nullptr passed\n";
-        std::cout << "if active empty\n";
+        // std::cout << "nullptr passed\n";
+        // std::cout << "if active empty\n";
         if(active.empty()) {
-            std::cout << current << '\n';
-            std::cout << current->in_chunk.size() << '\n';
+            // std::cout << current << '\n';
+            // std::cout << current->in_chunk.size() << '\n';
             for(auto i : current->in_chunk){
-                std::cout << "proceel pre insert" << i << "\n";
-                active.insert(i);
+                // std::cout << "proceel pre insert" << i << "\n";
+                active.push_back(i);
             }
         }
-        std::cout << "cam target\n";
+        // std::cout << "cam target\n";
         if(cam_target)
             cam_pos = lerp(
                 cam_pos, 
@@ -115,9 +120,9 @@ struct World{
         else if(cam_pos.x > CHUNK_SIZE.x - RES.x)
             cam_pos.x = CHUNK_SIZE.x - RES.x;
         if(cam_pos.y < current->pos * CHUNK_SIZE.y){
-            std::cout << "unload bottom\n";
+            // std::cout << "unload bottom\n";
             if(current->bottom != nullptr){
-                std::cout << "cycle start\n";
+                // std::cout << "cycle start\n";
                 for(auto it = active.begin(); it != active.end();){
                     if (*it && (*it)->chunk == current->bottom) {
                         it = active.erase(it);
@@ -132,12 +137,12 @@ struct World{
             if(current->top != nullptr){
                 current = current->top;
                 for(auto i : current->in_chunk)
-                    active.insert(i);
+                    active.push_back(i);
             }
             
         }
         else if(cam_pos.y >= current->pos+1 * CHUNK_SIZE.y){
-            std::cout << "unload top\n";
+            // std::cout << "unload top\n";
             for(auto it = active.begin(); it != active.end();){
                 if (*it && (*it)->chunk == current) {
                     it = active.erase(it);
@@ -151,11 +156,16 @@ struct World{
             if(current->bottom != nullptr){
                 current = current->bottom;
                 for(auto i : current->bottom->in_chunk)
-                    active.insert(i);
+                    active.push_back(i);
             }
         }
-        std::cout << "process dt\n";
+        // std::cout << "process dt\n";
         for(auto i : active){
+            // std::cout << i << '\n';
+            // std::cout << i->pos.x << ' ' << i->pos.y << '\n';
+            // std::cout << i->z << '\n';
+            // std::cout << i->chunk << '\n';
+            // std::cout << '\n';
             i->process(dt);
         }
     }
@@ -168,10 +178,6 @@ struct World{
             curr->draw(cam_pos);
             draw_queue.pop();
         }
-    }
-
-   ~World(){
-        delete root;
     }
    
 };
