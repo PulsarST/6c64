@@ -88,16 +88,21 @@ struct World{
         active.erase(item);
         item->chunk->in_chunk.erase(item);
         delete item;
+        std::cout << "REMOVED PERMANENTLY\n";
     }
 
     void process(float dt){
         if(current == nullptr)return;
         std::cout << "nullptr passed\n";
         std::cout << "if active empty\n";
-        if(active.empty())
+        if(active.empty()) {
+            std::cout << current << '\n';
+            std::cout << current->in_chunk.size() << '\n';
             for(auto i : current->in_chunk){
+                std::cout << "proceel pre insert" << i << "\n";
                 active.insert(i);
             }
+        }
         std::cout << "cam target\n";
         if(cam_target)
             cam_pos = lerp(

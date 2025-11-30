@@ -41,6 +41,10 @@ void Game::run() {
         deltaTime = GetFrameTime();
         levels[currentLevel]->update();
 
+        if (IsKeyDown(KEY_P)) {
+            currentLevel = (Level)((int)currentLevel + 1);
+        }
+
         BeginDrawing();
             ClearBackground(SKYBLUE);
 

@@ -6,8 +6,7 @@
 #include <iostream>
 
 void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
-    Base* house_sprite = new StaticSprite(pos, &l->house_0);
-    w->add(house_sprite, c);
+    w->add(new StaticSprite(pos, &l->house_0), c);
     w->add(new CollAABB(
         (vec2){73,292}+pos,
         (vec2){700,32}
@@ -55,8 +54,7 @@ void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
 }
 
 void Level2::house1(vec2 pos, World *w, Chunk *c, Level2 *l){
-    Base* house_sprite = new StaticSprite(pos, &l->house_1);
-    w->add(house_sprite, c);
+    w->add(new StaticSprite(pos, &l->house_1), c);
     w->add(new CollAABB(
         (vec2){157,420}+pos,
         (vec2){609,34}
@@ -79,8 +77,7 @@ void Level2::house1(vec2 pos, World *w, Chunk *c, Level2 *l){
 }
 
 void Level2::house2(vec2 pos, World *w, Chunk *c, Level2 *l){
-    Base* house_sprite = new StaticSprite(pos, &l->house_2);
-    w->add(house_sprite, c);
+    w->add(new StaticSprite(pos, &l->house_2), c);
     w->add(new CollAABB(
         (vec2){193,460}+pos,
         (vec2){508,26}
@@ -103,8 +100,7 @@ void Level2::house2(vec2 pos, World *w, Chunk *c, Level2 *l){
 }
 
 void Level2::house3(vec2 pos, World *w, Chunk *c, Level2 *l){
-    Base* house_sprite = new StaticSprite(pos, &l->house_3);
-    w->add(house_sprite, c);
+    w->add(new StaticSprite(pos, &l->house_3), c);
     w->add(new CollAABB(
         (vec2){237,308}+pos,
         (vec2){517,22}
@@ -228,7 +224,6 @@ Level2::Level2(): ILevel() {
 
     bg = ParallaxBG(parallax_coeffs, parallax_textures);
 
-    w = World();
     w.on_reaching_top = [this](World *w){
         Chunk *new_chunk = new Chunk(w->current->pos-1);
         w->current->top = new_chunk;
@@ -450,6 +445,5 @@ Level2::~Level2() {
 
     UnloadMusicStream(mus);
 
-    w.~World();
 }
 
