@@ -11,7 +11,7 @@
 #include "Game.h"
 
 extern inline Level currentLevel = LEVEL3;
-extern inline  bool buket = true;
+extern inline  bool buket = false;
 extern inline bool car_end = true;
 
 #endif //PUNKVERSEPROJECT_GLOBALS_H
