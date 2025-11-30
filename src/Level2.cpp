@@ -372,7 +372,7 @@ void Level2::update() {
     w.process(dt);
 
     // std::cout << "player collides with active\n";
-    for(auto &i : w.active){
+    for(auto i : w.active){
         if(auto p = dynamic_cast<Bullet*>(i)){
             if(IsKeyPressed(KEY_LEFT_SHIFT) && player_cast->isColliding(p)){
                 std::erase_if(bullets, [p]( Bullet* &el){return el == p;});
@@ -385,22 +385,22 @@ void Level2::update() {
     }
     
     // std::cout << "bullets collide with active\n";
-    for(auto &i : dirizhabls){
+    for(auto i : dirizhabls){
         if(i->pos.x > CHUNK_SIZE.x+600 || i->pos.x < -600){
             w.remove(dynamic_cast<Base*>(i));
             std::erase_if(dirizhabls, [i]( Dirizhabl* &el){return el == i;});
         }
     }
-    for(auto &i : bullets){
+    for(auto i : bullets){
         if(dist(i->pos - player_cast->pos) > 15.f * METER){
             w.remove(dynamic_cast<Base*>(i));
             std::erase_if(bullets, [i]( Bullet* &el){return el == i;});
         }
-        for(auto &j : w.active){
+        for(auto j : w.active){
             if(j == player)continue;
             i->colideWith(dynamic_cast<CollAABB*>(j), dt);
         }
-        for(auto &j : doors)
+        for(auto j : doors)
             if(i->isColliding(dynamic_cast<AABB*>(j))){
                 onDelivering(i);
                 w.remove(dynamic_cast<Base*>(i));

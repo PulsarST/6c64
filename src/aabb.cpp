@@ -236,23 +236,22 @@ void Dirizhabl::draw(vec2 &cam_pos){
     }
 }
 
-// Drone::Drone(float angle, tex2d *source):
-// KinemAABB(
-//     (vec2){spawn_from_left ? -400.f : CHUNK_SIZE.x + 400.f,height},
-//     (vec2){81.f, 27.f},
-//     CollisionType_PLATFORM
-//     ),
-//     source(source){
-//         z = 50;
-//         vel.x = spawn_from_left ? 2.f * METER : -2.f * METER;
-// }
+Drone::Drone(vec2 pos, tex2d *source):
+KinemAABB(
+    pos,
+    (vec2){81.f, 27.f},
+    CollisionType_PLATFORM
+    ),
+    source(source){
+        z = 40;
+}
     
-// void Drone::process(float dt){
-//     KinemAABB::process(dt);
-//     // std::cout << pos.x << '\n';
-// }
-// void Drone::draw(vec2 &cam_pos){
-//     if(source){
-//         DrawTextureV(*source, pos - cam_pos, WHITE);
-//     }
-// }
+void Drone::process(float dt){
+    KinemAABB::process(dt);
+    // std::cout << pos.x << '\n';
+}
+void Drone::draw(vec2 &cam_pos){
+    if(source){
+        DrawTextureV(*source, pos - cam_pos, WHITE);
+    }
+}

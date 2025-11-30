@@ -95,7 +95,7 @@ struct World{
         std::cout << "nullptr passed\n";
         std::cout << "if active empty\n";
         if(active.empty())
-            for(auto &i : current->in_chunk){
+            for(auto i : current->in_chunk){
                 active.insert(i);
             }
         std::cout << "cam target\n";
@@ -111,43 +111,51 @@ struct World{
             cam_pos.x = CHUNK_SIZE.x - RES.x;
         if(cam_pos.y < current->pos * CHUNK_SIZE.y){
             std::cout << "unload bottom\n";
-            if(current->bottom != nullptr)
-                for(auto &i : active){
-                    if(i->chunk == current->bottom)
-                        active.erase(i);
+            if(current->bottom != nullptr){
+                std::cout << "cycle start\n";
+                for(auto it = active.begin(); it != active.end();){
+                    if (*it && (*it)->chunk == current->bottom) {
+                        it = active.erase(it);
+                    } else {
+                        ++it;
+                    }
                 }
+            }
             if(current->top == nullptr){
                 on_reaching_top(this);
             }
             if(current->top != nullptr){
                 current = current->top;
-                for(auto &i : current->in_chunk)
+                for(auto i : current->in_chunk)
                     active.insert(i);
             }
             
         }
         else if(cam_pos.y >= current->pos+1 * CHUNK_SIZE.y){
             std::cout << "unload top\n";
-            for(auto &i : active){
-                if(i->chunk == current)
-                    active.erase(i);
+            for(auto it = active.begin(); it != active.end();){
+                if (*it && (*it)->chunk == current) {
+                    it = active.erase(it);
+                } else {
+                    ++it;
+                }
             }
             if(current->bottom == nullptr){
                 on_reaching_bottom(this);
             }
             if(current->bottom != nullptr){
                 current = current->bottom;
-                for(auto &i : current->bottom->in_chunk)
+                for(auto i : current->bottom->in_chunk)
                     active.insert(i);
             }
         }
         std::cout << "process dt\n";
-        for(auto &i : active){
+        for(auto i : active){
             i->process(dt);
         }
     }
     void draw(){
-        for(auto &i : active){
+        for(auto i : active){
             draw_queue.push(i);
         }
         while(!draw_queue.empty()){

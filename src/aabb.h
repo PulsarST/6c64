@@ -95,12 +95,12 @@ struct Dirizhabl: KinemAABB{
     void draw(vec2 &cam_pos) override;
 };
 
-// struct Drone: KinemAABB{
-//     tex2d *source = nullptr;
+struct Drone: KinemAABB{
+    tex2d *source = nullptr;
 
-//     Drone(){}
-//     Drone(float angle, tex2d *source = nullptr);
+    Drone(){}
+    Drone(vec2 pos, tex2d *source = nullptr);
     
-//     void process(float dt) override;
-//     void draw(vec2 &cam_pos) override;
-// };
+    void process(float dt) override;
+    void draw(vec2 &cam_pos) override;
+};
