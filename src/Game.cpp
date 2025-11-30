@@ -38,7 +38,7 @@ Game::Game(): levels(5) {
 
 void Game::run() {
     while (!WindowShouldClose()) {
-        if (IsKeyDown(KEY_P)) {
+        if (IsKeyPressed(KEY_P)) {
             currentLevel = (Level)((int)currentLevel + 1);
         }
         if(!levels[LEVEL2] && currentLevel == LEVEL2){

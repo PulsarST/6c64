@@ -53,6 +53,8 @@ public:
     void update() override;
 
     ~Level2() override;
+
+    void die();
 private:
 
     vec2    cam_pos;
@@ -78,6 +80,7 @@ private:
     std::vector<Bullet*> bullets;
     std::vector<Door*> doors;
     std::vector<Dirizhabl*> dirizhabls;
+    std::vector<Drone*> drones;
 
     tex2d   layer_1{};
     tex2d   layer_2{};
@@ -98,12 +101,14 @@ private:
             dirizhabl_left{},
             dirizhabl_right{},
             player_tex_left{},
-            player_tex_right{};
+            player_tex_right{},
+            drone{};
 
     AnimationSprite player_spr_left,
                     player_spr_right;
 
     Music   mus{};
+    Sound   death{};
 };
 
 

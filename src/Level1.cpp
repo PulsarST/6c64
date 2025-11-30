@@ -410,6 +410,7 @@ void Level1::update() {
         // ⬇️ ADD THIS CHECK HERE
         if ( (useGoodEnding && good_end_dialogue.getIsFinished()) ||
              (!useGoodEnding && bad_end_dialogue.getIsFinished()) ) {
+            buket = true;
 
             currentLevel = LEVEL2;   // <--- SWITCH LEVEL
             }

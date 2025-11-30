@@ -19,7 +19,8 @@ struct AABB: Base{
 
 enum CollType{
     CollisionType_SOLID = 0,
-    CollisionType_PLATFORM
+    CollisionType_PLATFORM,
+    CollisionType_DISABLED
 };
 
 struct CollAABB: AABB{

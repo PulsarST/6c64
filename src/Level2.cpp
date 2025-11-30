@@ -5,6 +5,8 @@
 #include "Level2.h"
 #include <iostream>
 
+#include "Globals.h"
+
 void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
     w->add(new StaticSprite(pos, &l->house_0), c);
     w->add(new CollAABB(
@@ -192,6 +194,7 @@ Level2::Level2(): ILevel() {
     want_food = LoadTexture("assets/want_food.png");
 
     box = LoadTexture("assets/ball.png");
+    drone = LoadTexture("assets/drone.png");
 
     ImageFlipHorizontal(&dirizhabl_right_img);
     ImageFlipHorizontal(&player_img_left);
@@ -256,6 +259,8 @@ void Level2::gameEndDraw(){
     }
     else if(zakasi == 0 && bullets.empty()){
         DrawText(delivered >= 7.5 ? "ORDERS DELIVERED!" : "YOU LOST TOO MUCH", RES.x/2-300.f, RES.y/2, 64, delivered >= 7.5 ? WHITE : RED);
+        car_end = true;
+        currentLevel = LEVEL3;
     }
 }
 
@@ -302,6 +307,11 @@ void Level2::gameEndCycle(float dt){
     // }
 }
 
+void Level2::die(){
+    game_timer *= 0.5f;
+    player->pos = {1500.f, -300.f};
+}
+
 void Level2::update() {
     float dt = GetFrameTime();
     // std::cout << "start\n";
@@ -334,6 +344,27 @@ void Level2::update() {
             w->current,
             1
         );
+
+        float angle = (float)(rand()%360);
+        vec2 attack_pos = 
+        1000.f*
+        (vec2){cosf(angle),sinf(angle)} + 
+        player_cast->pos + 
+        (vec2){rand()%400-200,rand()%400-200};
+
+        drones.push_back(
+            new Drone(
+                attack_pos,
+                &drone
+            )
+        );
+        drones.back()->vel = 5.f * METER * norm(player_cast->pos - attack_pos);
+        drones.back()->pos.y -= w->current->pos * CHUNK_SIZE.y;
+        w->add(
+            drones.back(),
+            w->current,
+            1
+        );
         dirizhabl_timer = 0.f;
     }
 
@@ -346,7 +377,7 @@ void Level2::update() {
         player_anim = 0;
 
     if(player_cast->pos.y > 1000.f){
-        game_timer *= 0.5f;
+        die();
     }
 
     player_spr_left.process(dt*(player_cast->vel.x != 0));
@@ -409,6 +440,14 @@ void Level2::update() {
                 std::erase_if(doors, [j]( Door* &el){return el == j;});
             }
     }
+    for(auto i : drones){
+        if(player_cast->isColliding(i))
+            die();
+        if(dist(i->pos - player->pos) >= 1500){
+            w->remove(dynamic_cast<Base*>(i));
+            std::erase_if(drones, [i]( Drone* &el){return el == i;});
+        }
+    }
     if(player_cast->vel.y == 0.f && IsKeyPressed(KEY_SPACE)){
         if(IsKeyDown(KEY_S)){
             player_cast->pos.y += 1.f;
@@ -448,7 +487,10 @@ Level2::~Level2() {
     UnloadTexture(player_tex_left);
     UnloadTexture(player_tex_right);
 
+    UnloadTexture(drone);
+
     UnloadMusicStream(mus);
+    UnloadSound(death);
 
     delete w;
 }

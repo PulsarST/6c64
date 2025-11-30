@@ -41,6 +41,8 @@ public:
 private:
     vector<string> lines;
     Texture2D *person;
+    Font dFont;
+
     vec2 pos;
     vec2 size;
 };
