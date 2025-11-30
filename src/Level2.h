@@ -48,6 +48,7 @@ public:
 
     void draw() override;
 
+    void gameEndCycle(float dt);
     void update() override;
 
     ~Level2() override;
@@ -68,6 +69,7 @@ private:
     bool player_anim = 0.f;
 
     float dirizhabl_timer = 0.f;
+    float last_throw_timer = 1.f;
     float max_game_time = 200.f;
     float game_timer = max_game_time;
     // float game_timer = 3.f;

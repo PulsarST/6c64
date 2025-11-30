@@ -278,11 +278,23 @@ void Level2::draw(){
     DrawText(("SCORE "+std::to_string(score)).c_str(), 20, 40, 40, WHITE);
     DrawText(("ORDERS "+std::to_string(zakasi)+" ("+std::to_string(delivered)+" DELIVERED)").c_str(), 20, 80, 40, WHITE);
     if(game_timer < 0.f){
-        DrawText("TIME'S UP!", RES.x/2, RES.y/2, 64, RED);
+        DrawText("TIME'S UP!", RES.x/2-100.f, RES.y/2, 64, RED);
+    }
+    else if(zakasi == 0 && bullets.empty()){
+        DrawText("ORDERS DELIVERED!", RES.x/2-300.f, RES.y/2, 64, WHITE);
     }
     DrawText("TIME", 317, 590, 40, WHITE);
     DrawRectangle(317,635,634,35,BLACK);
     DrawRectangle(318,636,632*game_timer/max_game_time,33,WHITE);
+}
+
+void Level2::gameEndCycle(float dt){
+    if(delivered >= 7.5){
+        //win
+    }
+    else{
+        //lose
+    }
 }
 
 void Level2::update() {
@@ -292,7 +304,12 @@ void Level2::update() {
         PlayMusicStream(mus);
     UpdateMusicStream(mus);
 
-    if(game_timer <= 0.f)return;
+    bool game_end = game_timer <= 0.f || (zakasi == 0 && bullets.empty());
+
+    if(game_end){
+        gameEndCycle(dt);
+        return;
+    }
 
     dirizhabl_timer += dt;
     game_timer -= dt;
@@ -347,7 +364,13 @@ void Level2::update() {
 
     // std::cout << "player collides with active\n";
     for(auto &i : w.active){
-        if(dynamic_cast<Bullet*>(i))continue;
+        if(auto p = dynamic_cast<Bullet*>(i)){
+            if(IsKeyPressed(KEY_LEFT_SHIFT) && player_cast->isColliding(p)){
+                std::erase_if(bullets, [p]( Bullet* &el){return el == p;});
+                w.remove(dynamic_cast<Base*>(i));
+            }
+            continue;
+        }
         player_cast->colideWith(dynamic_cast<CollAABB*>(i), dt);
     }
     
@@ -355,10 +378,14 @@ void Level2::update() {
     for(auto &i : dirizhabls){
         if(i->pos.x > CHUNK_SIZE.x+600 || i->pos.x < -600){
             w.remove(dynamic_cast<Base*>(i));
-            dirizhabls.erase(dirizhabls.begin() + (u64)(&i - dirizhabls.data()));
+            std::erase_if(dirizhabls, [i]( Dirizhabl* &el){return el == i;});
         }
     }
     for(auto &i : bullets){
+        if(dist(i->pos - player_cast->pos) > 15.f * METER){
+            w.remove(dynamic_cast<Base*>(i));
+            std::erase_if(bullets, [i]( Bullet* &el){return el == i;});
+        }
         for(auto &j : w.active){
             if(j == player)continue;
             i->colideWith(dynamic_cast<CollAABB*>(j), dt);
@@ -367,9 +394,9 @@ void Level2::update() {
             if(i->isColliding(dynamic_cast<AABB*>(j))){
                 onDelivering(i);
                 w.remove(dynamic_cast<Base*>(i));
-                bullets.erase(bullets.begin() + (u64)(&i - bullets.data()));
+                std::erase_if(bullets, [i]( Bullet* &el){return el == i;});
                 w.remove(dynamic_cast<Base*>(j));
-                doors.erase(doors.begin() + (u64)(&j - doors.data()));
+                std::erase_if(doors, [j]( Door* &el){return el == j;});
             }
     }
     if(player_cast->vel.y == 0.f && IsKeyPressed(KEY_SPACE)){
