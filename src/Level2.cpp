@@ -7,8 +7,6 @@
 
 #include "Globals.h"
 
-extern inline bool buket;
-extern inline Level currentLevel;
 
 void Level2::house0(vec2 pos, World *w, Chunk *c, Level2 *l){
     w->add(new StaticSprite(pos, &l->house_0), c);
@@ -266,6 +264,16 @@ void Level2::gameEndDraw(){
     }
 }
 
+void Level2::drawControlsHint() {
+    DrawText("WASD: WALK", 20, RES.y - 140, 20, WHITE);
+    DrawText("LMB: THROW THE BOX", 20, RES.y - 120, 20, WHITE);
+    DrawText("CURSOR: AIM FOR THE THROW", 20, RES.y - 100, 20, WHITE);
+    DrawText("LSHIFT: PICK UP THE BOX", 20, RES.y - 80, 20, WHITE);
+    DrawText("SPACE: JUMP", 20, RES.y - 60, 20, WHITE);
+    DrawText("S + SPACE: JUMP DOWN", 20, RES.y - 40, 20, WHITE);
+}
+
+
 void Level2::draw(){
     bool game_end = game_timer <= 0.f || (zakasi == 0 && bullets.empty());
     if(game_end){
@@ -299,12 +307,14 @@ void Level2::draw(){
     DrawRectangle(317,635,634,35,BLACK);
     DrawRectangle(318,636,632*game_timer/max_game_time,33,WHITE);
     DrawRectangle(0,0,RES.x,RES.y, (Color){127,0,0,(unsigned char)(255*std::max(0.f,1.f-(last_death_timer*2.f)))});
+    drawControlsHint();
 }
 
 void Level2::gameEndCycle(float dt){
     buket = delivered >= 6;
     end_timer -= dt;
     if(end_timer <= 0.f){
+        std::cout << "awdmlkfmeskfmesml\n";
         currentLevel = LEVEL3;
     }
     // if(delivered >= 7.5){
@@ -317,8 +327,6 @@ void Level2::gameEndCycle(float dt){
 
 void Level2::die(){
     game_timer *= 0.5f;
-    player->pos = {1500.f, -300.f};
-    w->cam_pos = player->pos - (RES*0.5f);
     last_death_timer = 0.f;
 }
 
@@ -358,7 +366,7 @@ void Level2::update() {
 
         float angle = (float)(rand()%360);
         vec2 attack_pos = 
-        1000.f*
+        1500.f*
         (vec2){cosf(angle),sinf(angle)} + 
         player_cast->pos + 
         (vec2){rand()%400-200,rand()%400-200};
@@ -370,7 +378,7 @@ void Level2::update() {
                     &drone
                 )
             );
-            drones.back()->vel = 5.f * METER * norm(player_cast->pos - attack_pos);
+            drones.back()->vel = 3.f * METER * norm(player_cast->pos - attack_pos);
             drones.back()->pos.y -= w->current->pos * CHUNK_SIZE.y;
             w->add(
                 drones.back(),
@@ -391,6 +399,8 @@ void Level2::update() {
 
     if(player_cast->pos.y > 1000.f){
         die();
+        player_cast->pos = {1500.f, -300.f};
+        w->cam_pos = player_cast->pos;
     }
 
     player_spr_left.process(dt*(player_cast->vel.x != 0));
@@ -454,9 +464,12 @@ void Level2::update() {
             }
     }
     for(auto i : drones){
-        if(player_cast->isColliding(i))
+        if(player_cast->isColliding(i)) {
             die();
-        if(dist(i->pos - player->pos) >= 1500){
+            w->remove(dynamic_cast<Base*>(i));
+            std::erase_if(drones, [i]( Drone* &el){return el == i;});
+        }
+        if(dist(i->pos - player->pos) >= 1900){
             w->remove(dynamic_cast<Base*>(i));
             std::erase_if(drones, [i]( Drone* &el){return el == i;});
         }

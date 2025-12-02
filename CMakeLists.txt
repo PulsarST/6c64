@@ -3,7 +3,23 @@ project(PunkVerseProject)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(${PROJECT_NAME} src/main.cpp
+# --- STATIC BUILD ON MINGW ---
+if (MINGW)
+    message(STATUS "Building static executable on MinGW-w64")
+
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
+        -static -static-libgcc -static-libstdc++ \
+        -Wl,--whole-archive -lpthread -Wl,--no-whole-archive \
+        -Wl,-subsystem,windows"
+    )
+
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+endif()
+# --------------------------------
+
+# 🔥 IMPORTANT: WIN32 removes the console window
+add_executable(${PROJECT_NAME} WIN32
+        src/main.cpp
         src/types.h
         src/Globals.h
         src/Note.cpp
@@ -46,7 +62,6 @@ fetchcontent_declare(
 fetchcontent_makeavailable(raylib)
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
 
-
 set(ASSETS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets)
 set(ASSETS_DEST_DIR ${CMAKE_BINARY_DIR}/assets)
 
@@ -56,4 +71,3 @@ add_custom_command(
         "${ASSETS_SOURCE_DIR}"
         "${ASSETS_DEST_DIR}"
 )
-

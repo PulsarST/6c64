@@ -319,34 +319,36 @@ Level1::Level1()
 
     dialogManager.addDialog(&person_fr1,  vec2 {50,6.f * GetScreenHeight() / 8});
     dialogManager.addLines(0, {
-        "Хэй Бро !",
-        "Я слышал что тебе нужна машина, да ? Так я тебе могу помочь",
-        "НООООООООООООООООООООООООООоооооооо !",
-        "Ты Должен Победить Меня В Танцах !",
-        "Если ты выйграешь то тачка твоя !",
-        "Договорились !"
+        "So you want me to give you my car? I’ve known you since childhood,",
+        "which means I know very well how careless you are.",
+        "Giving you my car would be the height of madness."
     });
 
     dialogManager.addDialog(&person_fr1,  vec2 {50,6.f * GetScreenHeight() / 8});
     dialogManager.addLines(1, {
-        "Ок бро !",
-        "Давай зажжём !"
-        "Наша битва будет легендарной !"
+        "But I have one trait stronger than common sense. My love for dancing."
     });
+
+    dialogManager.addDialog(&person_fr1,  vec2 {50,6.f * GetScreenHeight() / 8});
+    dialogManager.addLines(2, {
+        "If you beat me, fine, I’ll give you the car keys for the evening.Do you want to take the risk?"
+    });
+
+
+
 
     bad_end_dialogue.addDialog(&person_fr1, vec2 {50,6.f * GetScreenHeight() / 8});
     bad_end_dialogue.addLines(0, {
-        "Не плохо",
-        "НОо ! Этого не достаточно !",
-        "Тренируйся !",
-        "Кчау !"
+        "Not bad !",
+        "But it's not enough !",
+        "You should practice !",
+        "Kchau !"
     });
 
     good_end_dialogue.addDialog(&person_fr1, vec2 {50,6.f * GetScreenHeight() / 8});
     good_end_dialogue.addLines(0, {
-        "Я этого не ожидал ! Ты крут БРО !",
-        "Тачка твоя",
-        "Заслужил !"
+        "I don't except this !",
+        "You deserve it !",
     });
 }
 
@@ -410,7 +412,9 @@ void Level1::update() {
         // ⬇️ ADD THIS CHECK HERE
         if ( (useGoodEnding && good_end_dialogue.getIsFinished()) ||
              (!useGoodEnding && bad_end_dialogue.getIsFinished()) ) {
-            buket = true;
+
+            if (rhythm_score > 100)
+                car_end = true;
 
             currentLevel = LEVEL2;   // <--- SWITCH LEVEL
             }

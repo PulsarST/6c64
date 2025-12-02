@@ -4,6 +4,8 @@
 
 #include "Level3.h"
 
+#include <iostream>
+
 #include "Globals.h"
 
 Level3::Level3() : ILevel() {
@@ -164,16 +166,22 @@ Level3::Level3() : ILevel() {
 }
 
 void Level3::draw() {
+    std::cout << "draw level 3\n";
     if (!buket && car_end) {
         fatherEnd.draw();
     } else if (buket && !car_end) {
         granpaEnd.draw();
     } else if (buket && car_end) {
         girlEnd.draw();
+    } else {
+        ClearBackground(BLACK);
+        DrawText("But nobody came .", GetScreenWidth() / 2.0, GetScreenHeight() / 2.0, 20, WHITE);
+        DrawText("No one needs you without that car, or those flowers ...", GetScreenWidth() / 2.0, GetScreenHeight() / 2.0 + 20, 20, WHITE);
     }
 }
 
 void Level3::update() {
+    std::cout << "update level 3\n";
     if (!buket && car_end) {
         fatherEnd.update();
     } else if (buket && !car_end) {

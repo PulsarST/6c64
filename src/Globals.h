@@ -10,8 +10,8 @@
 #define WIN_TITLE "GAME"
 #include "Game.h"
 
-extern inline Level currentLevel = LEVEL1;
+extern inline Level currentLevel = MENU;
 extern inline  bool buket = false;
-extern inline bool car_end = true;
+extern inline bool car_end = false;
 
 #endif //PUNKVERSEPROJECT_GLOBALS_H

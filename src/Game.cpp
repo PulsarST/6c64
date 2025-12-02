@@ -38,15 +38,17 @@ Game::Game(): levels(5) {
 
 void Game::run() {
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_P)) {
-            currentLevel = (Level)((int)currentLevel + 1);
-        }
-        if(!levels[LEVEL2] && currentLevel == LEVEL2){
-            levels[LEVEL2] = new Level2();
-        }
 
         deltaTime = GetFrameTime();
         levels[currentLevel]->update();
+
+        if (IsKeyPressed(KEY_P)) {
+            currentLevel = (Level)((int)currentLevel + 1);
+        }
+
+        if(!levels[LEVEL2] && currentLevel == LEVEL2){
+            levels[LEVEL2] = new Level2();
+        }
 
         BeginDrawing();
             ClearBackground(SKYBLUE);
